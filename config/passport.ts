@@ -1,8 +1,14 @@
-const _ = require('lodash');
-const passport = require('passport');
-const TwitterStrategy = require('passport-twitter').Strategy;
+import _ from 'lodash';
+import passport from 'passport';
+import { Strategy as TwitterStrategy } from 'passport-twitter';
+import { NextFunction, Request, Response } from 'express';
 
-const User = require('../models/User');
+import User from '../models/User';
+
+interface IPassportUser {
+	id: any,
+	tokens: any,
+}
 
 const colors = [
 	'#777777',
@@ -17,7 +23,7 @@ const colors = [
 ];
 
 passport.serializeUser((user, done) => {
-	done(null, user.id);
+	done(null, (user as IPassportUser).id);
 });
 
 passport.deserializeUser((id, done) => {
@@ -42,21 +48,20 @@ passport.use(
 		async (req, accessToken, tokenSecret, profile, done) => {
 			try {
 				if (req.user) {
-					const existingUser = await User.findOne({twitter: profile.id});
+					const existingUser = await User.findOne({ twitter: profile.id });
 
 					if (existingUser) {
-						req.flash('errors', {
-							msg:
-								'There is already a Twitter account that belongs to you. Sign in with that account or delete it, then link it with your current account.',
-						});
-						done();
+						req.flash('errors',
+							'There is already a Twitter account that belongs to you. Sign in with that account or delete it, then link it with your current account.',
+						);
+						done(null, req.user);
 						return;
 					}
 
-					const user = await User.findById(req.user.id);
+					const user = await User.findById((req.user as IPassportUser).id);
 
 					user.twitter = profile.id;
-					user.tokens.push({kind: 'twitter', accessToken, tokenSecret});
+					user.tokens.push({ kind: 'twitter', accessToken, tokenSecret });
 					user.profile.name = user.profile.name || profile.displayName;
 					user.profile.location =
 						user.profile.location || profile._json.location;
@@ -64,10 +69,10 @@ passport.use(
 						user.profile.picture || profile._json.profile_image_url_https;
 
 					await user.save();
-					req.flash('info', {msg: 'Twitter account has been linked.'});
+					req.flash('info', 'Twitter account has been linked.');
 					done(null, user);
 				} else {
-					const existingUser = await User.findOne({twitter: profile.id});
+					const existingUser = await User.findOne({ twitter: profile.id });
 					if (existingUser) {
 						done(null, existingUser);
 						return;
@@ -80,9 +85,8 @@ passport.use(
 					// But a person’s twitter username is guaranteed to be unique
 					// so we can "fake" a twitter email address as follows:
 					user.email = `${profile.username}@twitter.com`;
-					user.color = colors[count % colors.length];
 					user.twitter = profile.id;
-					user.tokens.push({kind: 'twitter', accessToken, tokenSecret});
+					user.tokens.push({ kind: 'twitter', accessToken, tokenSecret });
 					user.profile.name = profile.displayName;
 					user.profile.location = profile._json.location;
 					user.profile.picture = profile._json.profile_image_url_https;
@@ -102,24 +106,24 @@ passport.use(
 /*
  * Login Required middleware.
  */
-module.exports.isAuthenticated = (req, res, next) => {
+export function isAuthenticated(req: Request, res: Response, next: NextFunction) {
 	if (req.isAuthenticated()) {
 		next();
 		return;
 	}
 	res.redirect('/login');
-};
+}
 
 /*
  * Authorization Required middleware.
  */
-module.exports.isAuthorized = (req, res, next) => {
+export function isAuthorized(req: Request, res: Response, next: NextFunction) {
 	const provider = req.path.split('/').slice(-1)[0];
 
-	if (_.find(req.user.tokens, {kind: provider})) {
+	if (_.find((req.user as IPassportUser).tokens, { kind: provider })) {
 		next();
 		return;
 	}
 
 	res.redirect(`/auth/${provider}`);
-};
+}
