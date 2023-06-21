@@ -10,10 +10,12 @@
   "author": "Koki Takahashi <hakatasiloving@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "compile": "npx tsc",
-    "start": "npm run compile && node ./dist/app.mjs",
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean && mkdir ./dist && cp -R ./public ./dist && cp -R ./views ./dist && cp .env ./dist && npx tsc",
+    "migrate": "npm run build; node ./dist/bin/migrate.js",
+    "start": "npm run build; node ./dist/app.mjs",
     "test": "mocha --reporter spec --exit",
-    "dev": "npm run compile && nodemon ./dist/app.mjs",
+    "dev": "nodemon --exec npm run start --ignore dist --ignore public",
     "lint": "prettier-eslint '**/*.js' '**/*.mjs' '**/*.jsx' --ignore 'public/js/lib/**' --write && eslint '**/*.js' --ignore-pattern 'public/js/lib/**'"
   },
   "engines": {
