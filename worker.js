@@ -6,9 +6,9 @@ const dotenv = require('dotenv');
 const dotenvExpand = require('dotenv-expand');
 const firebase = require('firebase-admin');
 const {v4: uuid} = require('uuid');
-const docker = require('./engines/docker.js');
+import docker from './engines/docker.js';
 
-dotenvExpand(dotenv.config({path: '.env'}));
+dotenvExpand.expand(dotenv.config({path: '.env'}));
 
 const mutex = new Mutex();
 

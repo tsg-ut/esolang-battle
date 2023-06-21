@@ -1,14 +1,14 @@
 /* eslint-env browser */
 
-const assert = require('assert');
-const fs = require('fs/promises');
-const path = require('path');
-const concatStream = require('concat-stream');
-const Docker = require('dockerode');
-const shellescape = require('shell-escape');
-const tmp = require('tmp');
-const {getCodeLimit, getTimeLimit} = require('../controllers/utils.js');
-const langInfos = require('../data/infos.json');
+import assert from 'assert';
+import fs from 'fs/promises';
+import path from 'path';
+import concatStream from 'concat-stream';
+import Docker from 'dockerode';
+import shellescape from 'shell-escape';
+import tmp from 'tmp';
+import {getCodeLimit, getTimeLimit} from '../controllers/utils.js';
+import langInfos from '../data/infos.json';
 
 const docker = new Docker();
 
@@ -28,14 +28,23 @@ const timeout = (promise, msec) => {
 	return Promise.race([promise, timeoutPromise]);
 };
 
-module.exports = async ({
+interface DockerQuery {
+	id: string,
+	code: Buffer,
+	stdin: string,
+	trace: boolean,
+	disasm?: boolean,
+	imageId?: string,
+}
+
+export default async function execDocker({
 	id,
 	code,
 	stdin,
 	trace: traceOption,
 	disasm = false,
 	imageId,
-}) => {
+}: DockerQuery) {
 	assert(typeof id === 'string');
 	assert(imageId === undefined || typeof imageId === 'string');
 	assert(Buffer.isBuffer(code));
@@ -46,7 +55,7 @@ module.exports = async ({
 	const langInfo = langInfos.find(({slug}) => slug === id);
 	const trace = traceOption && langInfo && langInfo.time && langInfo.time <= 10;
 
-	const {tmpPath, cleanup} = await new Promise((resolve, reject) => {
+	const {tmpPath, cleanup}: {tmpPath: string, cleanup: () => void} = await new Promise((resolve, reject) => {
 		tmp.dir({unsafeCleanup: true}, (error, dTmpPath, dCleanup) => {
 			if (error) {
 				reject(error);
@@ -128,7 +137,6 @@ module.exports = async ({
 				Volumes: {
 					'/volume': {},
 				},
-				VolumesFrom: [],
 				HostConfig: {
 					Binds: [
 						`${dockerVolumePath}:/volume:${trace === true ? 'rw' : 'ro'}`,
