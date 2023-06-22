@@ -1,14 +1,15 @@
-const qs = require('querystring');
-const classnames = require('classnames');
-const MarkdownIt = require('markdown-it');
-const {getLanguageMap} = require('../controllers/utils');
-const Contest = require('../models/Contest');
-const User = require('../models/User');
+import qs from 'querystring';
+import classnames from 'classnames';
+import MarkdownIt from 'markdown-it';
+import {getLanguageMap} from '../controllers/utils';
+import Contest from '../models/Contest';
+import User from '../models/User';
+import { NextFunction, Request, Response } from 'express';
 
 /*
  * Middleware for all /contest/:contest routes
  */
-module.exports.base = async (req, res, next) => {
+export async function base(req: Request, res: Response, next: NextFunction) {
 	const contest = await Contest.findOne({id: req.params.contest});
 
 	if (!contest) {
@@ -24,7 +25,7 @@ module.exports.base = async (req, res, next) => {
  * GET /
  * Home page.
  */
-module.exports.index = async (req, res) => {
+export async function index(req: Request, res: Response) {
 	const languageMap = await getLanguageMap({contest: req.contest});
 	res.render('contest', {
 		title: '',
@@ -35,7 +36,7 @@ module.exports.index = async (req, res) => {
 	});
 };
 
-module.exports.rule = (req, res) => {
+export function rule(req: Request, res: Response) {
 	const markdown = new MarkdownIt();
 	res.render('rule', {
 		contest: req.contest,
@@ -50,7 +51,7 @@ module.exports.rule = (req, res) => {
 /*
  * GET /contest/:contest/admin
  */
-module.exports.getAdmin = async (req, res) => {
+export async function getAdmin(req: Request, res: Response) {
 	if (!req.user.admin) {
 		res.sendStatus(403);
 		return;
@@ -58,7 +59,7 @@ module.exports.getAdmin = async (req, res) => {
 
 	if (req.query.user && req.query.team) {
 		const user = await User.findOne({_id: req.query.user});
-		user.setTeam(req.contest, req.query.team);
+		user.setTeam(req.contest, parseInt(req.query.team as string) as 0 | 1 | 2 | 3 | 4);
 		await user.save();
 		res.redirect(`/contests/${req.params.contest}/admin`);
 		return;
@@ -78,7 +79,7 @@ module.exports.getAdmin = async (req, res) => {
 /*
  * GET /contest/:contest/check
  */
-module.exports.getCheck = async (req, res) => {
+export async function getCheck(req: Request, res: Response) {
 	if (!req.contest.isOpen()) {
 		res.redirect(`/contests/${req.contest.id}`);
 		return;

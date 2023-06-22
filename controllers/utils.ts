@@ -1,10 +1,10 @@
-const assert = require('assert');
-const contests = require('../contests');
-const langInfos = require('../data/infos.json');
-const languages = require('../data/languages');
-const Language = require('../models/Language');
+import assert from 'assert';
+import contests from '../contests';
+import langInfos from '../data/infos.json';
+import languages from '../data/languages';
+import Language from '../models/Language';
 
-module.exports.getLanguageMap = async ({team = null, contest} = {}) => {
+export async function getLanguageMap({team = null, contest}) {
 	const languageRecords = await Language.find({contest})
 		.populate({
 			path: 'solution',
@@ -141,7 +141,7 @@ module.exports.getLanguageMap = async ({team = null, contest} = {}) => {
 	});
 };
 
-const getCodeLimit = (languageId) => {
+export function getCodeLimit(languageId: string) {
 	if (['fernando', 'pure-folders'].includes(languageId)) {
 		return 1024 * 1024;
 	}
@@ -163,9 +163,7 @@ const getCodeLimit = (languageId) => {
 	return 10 * 1024;
 };
 
-module.exports.getCodeLimit = getCodeLimit;
-
-module.exports.getTimeLimit = (languageId) => {
+export function getTimeLimit(languageId: string) {
 	if (['kotlin', 'husk'].includes(languageId)) {
 		return 30 * 1000;
 	}

@@ -1,11 +1,12 @@
-const {sample} = require('lodash');
-const Contest = require('../models/Contest');
+import {sample} from 'lodash';
+import Contest from '../models/Contest';
+import { Request, Response } from 'express';
 
 /*
  * GET /
  * Home page.
  */
-module.exports.index = async (req, res) => {
+export async function index(req: Request, res: Response) {
 	const contests = await Contest.find()
 		.sort({_id: -1})
 		.exec();

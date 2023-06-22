@@ -1,15 +1,17 @@
-const assert = require('assert');
-const crypto = require('crypto');
-const concatStream = require('concat-stream');
-const {getLanguageMap, getCodeLimit} = require('../controllers/utils');
-const languages = require('../data/languages');
-const docker = require('../engines/docker');
-const validation = require('../lib/validation');
-const Contest = require('../models/Contest');
-const Execution = require('../models/Execution');
-const Language = require('../models/Language');
-const Submission = require('../models/Submission');
-const {Mutex} = require('async-mutex');
+import assert from 'assert';
+import crypto from 'crypto';
+import concatStream from 'concat-stream';
+import {getLanguageMap, getCodeLimit} from '../controllers/utils';
+import languages from '../data/languages';
+import docker from '../engines/docker';
+import validation from '../lib/validation';
+import Contest from '../models/Contest';
+import Execution from '../models/Execution';
+import Language from '../models/Language';
+import Submission from '../models/Submission';
+import {Mutex} from 'async-mutex';
+import { NextFunction, Request, Response, Express } from 'express';
+import { isArray } from 'lodash';
 
 const executionMutex = new Mutex();
 const apiKey = process.env.API_KEY || crypto.randomBytes(64).toString('hex');
@@ -17,7 +19,7 @@ const apiKey = process.env.API_KEY || crypto.randomBytes(64).toString('hex');
 /*
  * Middleware for all /api/contest/:contest routes
  */
-module.exports.contest = async (req, res, next) => {
+export async function contest(req: Request, res: Response, next: NextFunction) {
 	const contest = await Contest.findOne({id: req.params.contest});
 
 	if (!contest) {
@@ -32,7 +34,7 @@ module.exports.contest = async (req, res, next) => {
 /*
  * GET /api/contests/:contest/languages
  */
-module.exports.getLanguages = async (req, res, next) => {
+export async function getLanguages(req: Request, res: Response, next: NextFunction) {
 	// FIXME: visibility test
 	try {
 		const languageMap = await getLanguageMap({
@@ -49,7 +51,7 @@ module.exports.getLanguages = async (req, res, next) => {
 /*
  * GET /api/contests/:contest/submission
  */
-module.exports.getSubmission = async (req, res, next) => {
+export async function getSubmission(req: Request, res: Response, next: NextFunction) {
 	try {
 		const submission = await Submission.findOne({_id: req.query._id})
 			.populate('user')
@@ -73,7 +75,7 @@ module.exports.getSubmission = async (req, res, next) => {
 /*
  * POST /api/execution
  */
-module.exports.postExecution = async (req, res) => {
+export async function postExecution(req: Request, res: Response) {
 	try {
 		assert(req.body.token === apiKey, 'Please provide valid token');
 
@@ -134,7 +136,7 @@ module.exports.postExecution = async (req, res) => {
 /*
  * POST /api/contest/:contest/execution
  */
-module.exports.postContestExecution = async (req, res) => {
+export async function postContestExecution(req: Request, res: Response) {
 	try {
 		if (!req.contest.isOpen()) {
 			throw new Error('Competition has closed');
@@ -142,17 +144,21 @@ module.exports.postContestExecution = async (req, res) => {
 
 		let code = null;
 
-		if (req.files && req.files.file && req.files.file.length === 1) {
-			assert(
-				req.files.file[0].size < getCodeLimit(req.body.language),
-				'Code cannot be longer than 10,000 bytes',
-			);
-			code = await new Promise((resolve) => {
-				const stream = concatStream(resolve);
-				req.files.file[0].stream.pipe(stream);
-			});
-		} else {
-			code = Buffer.from(req.body.code.replace(/\r\n/g, '\n'), 'utf8');
+		if (!isArray(req.files)) {
+			if (req.files && req.files.file && req.files.file.length === 1) {
+				assert(
+					req.files.file[0].size < getCodeLimit(req.body.language),
+					'Code cannot be longer than 10,000 bytes',
+				);
+				code = await new Promise((resolve) => {
+					const stream = concatStream(resolve);
+					if (!isArray(req.files)) {
+						req.files.file[0].stream.pipe(stream);
+					}
+				});
+			} else {
+				code = Buffer.from(req.body.code.replace(/\r\n/g, '\n'), 'utf8');
+			}
 		}
 
 		assert(code.length >= 1, 'Code cannot be empty');
@@ -178,7 +184,7 @@ module.exports.postContestExecution = async (req, res) => {
 			.exec();
 		if (
 			latestExecution !== null &&
-			latestExecution.createdAt > Date.now() - 5 * 1000
+			latestExecution.createdAt.getTime() > Date.now() - 5 * 1000
 		) {
 			throw new Error('Execution interval is too short');
 		}
@@ -188,10 +194,9 @@ module.exports.postContestExecution = async (req, res) => {
 			contest: req.contest,
 		}).exec();
 
-		const language = await new Promise((resolve) => {
+		const language = await (async () => {
 			if (existingLanguage !== null) {
-				resolve(existingLanguage);
-				return;
+				return existingLanguage;
 			}
 
 			const newLanguage = new Language({
@@ -200,10 +205,9 @@ module.exports.postContestExecution = async (req, res) => {
 				contest: req.contest,
 			});
 
-			newLanguage.save().then(() => {
-				resolve(newLanguage);
-			});
-		});
+			await newLanguage.save();
+			return newLanguage;
+		})();
 
 		const info = await executionMutex.runExclusive(() => docker({
 			id: language.slug,
@@ -248,7 +252,7 @@ module.exports.postContestExecution = async (req, res) => {
 /*
  * POST /api/contest/:contest/submission
  */
-module.exports.postSubmission = async (req, res) => {
+export async function postSubmission(req: Request, res: Response) {
 	try {
 		if (!req.contest.isOpen()) {
 			throw new Error('Competition has closed');
@@ -256,17 +260,21 @@ module.exports.postSubmission = async (req, res) => {
 
 		let code = null;
 
-		if (req.files && req.files.file && req.files.file.length === 1) {
-			assert(
-				req.files.file[0].size < getCodeLimit(req.body.language),
-				'Code cannot be longer than 10,000 bytes',
-			);
-			code = await new Promise((resolve) => {
-				const stream = concatStream(resolve);
-				req.files.file[0].stream.pipe(stream);
-			});
-		} else {
-			code = Buffer.from(req.body.code.replace(/\r\n/g, '\n'), 'utf8');
+		if (!isArray(req.files)) {
+			if (req.files && req.files.file && req.files.file.length === 1) {
+				assert(
+					req.files.file[0].size < getCodeLimit(req.body.language),
+					'Code cannot be longer than 10,000 bytes',
+				);
+				code = await new Promise((resolve) => {
+					const stream = concatStream(resolve);
+					if (!isArray(req.files)) {
+						req.files.file[0].stream.pipe(stream);
+					}
+				});
+			} else {
+				code = Buffer.from(req.body.code.replace(/\r\n/g, '\n'), 'utf8');
+			}
 		}
 
 		assert(code.length >= 1, 'Code cannot be empty');
@@ -288,7 +296,7 @@ module.exports.postSubmission = async (req, res) => {
 			.exec();
 		if (
 			latestSubmission !== null &&
-			latestSubmission.createdAt > Date.now() - 5 * 1000
+			latestSubmission.createdAt.getTime() > Date.now() - 5 * 1000
 		) {
 			throw new Error('Submission interval is too short');
 		}
@@ -300,19 +308,17 @@ module.exports.postSubmission = async (req, res) => {
 			.populate({path: 'solution', populate: {path: 'user'}})
 			.exec();
 
-		const language = await new Promise((resolve, reject) => {
-			// FIXME: Check if preceding cell is aleady taken
+		const language = await (async () => {
+			// FIXME: Check if preceding cell is already taken
 			if (existingLanguage !== null) {
 				if (
 					existingLanguage.solution &&
 					existingLanguage.solution.size <= code.length
 				) {
-					reject(new Error('Shorter solution is already submitted'));
-					return;
+					throw new Error('Shorter solution is already submitted');
 				}
 
-				resolve(existingLanguage);
-				return;
+				return existingLanguage;
 			}
 
 			const newLanguage = new Language({
@@ -321,10 +327,9 @@ module.exports.postSubmission = async (req, res) => {
 				contest: req.contest,
 			});
 
-			newLanguage.save().then(() => {
-				resolve(newLanguage);
-			});
-		});
+			await newLanguage.save();
+			return newLanguage;
+		})();
 
 		const submissionRecord = new Submission({
 			language: language._id,

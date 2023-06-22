@@ -1,8 +1,10 @@
+import { Request, Response } from "express";
+
 /*
  * GET /login
  * Login page.
  */
-module.exports.getLogin = (req, res) => {
+export function getLogin(req: Request, res: Response) {
 	if (req.user) {
 		res.redirect('/');
 		return;
@@ -16,7 +18,7 @@ module.exports.getLogin = (req, res) => {
  * GET /logout
  * Log out.
  */
-module.exports.logout = (req, res) => {
+export function logout(req: Request, res: Response) {
 	req.logout((error) => {
 		if (!error) {
 			res.redirect('/');
@@ -28,7 +30,7 @@ module.exports.logout = (req, res) => {
  * GET /account
  * Profile page.
  */
-module.exports.getAccount = (req, res) => {
+export function getAccount(req: Request, res: Response) {
 	res.render('account/profile', {
 		title: 'Account Management',
 	});

@@ -1,17 +1,21 @@
-const qs = require('querystring');
-const concatStream = require('concat-stream');
-const Hexdump = require('hexdump-stream');
-const isValidUTF8 = require('utf-8-validate');
-const Language = require('../models/Language');
-const Submission = require('../models/Submission');
-const User = require('../models/User');
+import qs from 'querystring';
+import concatStream from 'concat-stream';
+import Hexdump from 'hexdump-stream';
+import isValidUTF8 from 'utf-8-validate';
+import Language from '../models/Language';
+import Submission from '../models/Submission';
+import User from '../models/User';
+import { Request, Response } from 'express';
 
 /*
  * GET /submissions
  */
-module.exports.getSubmissions = async (req, res) => {
+export async function getSubmissions(req: Request, res: Response) {
 	const query = {
 		contest: req.contest,
+		user: undefined,
+		language: undefined,
+		status: undefined,
 	};
 
 	if (req.query.author) {
@@ -33,7 +37,7 @@ module.exports.getSubmissions = async (req, res) => {
 		}
 	}
 
-	const page = parseInt(req.query && req.query.page) || 0;
+	const page = parseInt(req.query && req.query.page as string) || 0;
 
 	if (req.query.status) {
 		query.status = req.query.status;
@@ -84,7 +88,7 @@ module.exports.getSubmissions = async (req, res) => {
 /*
  * GET /submissions/:submission
  */
-module.exports.getSubmission = async (req, res) => {
+export async function getSubmission(req: Request, res: Response) {
 	const _id = req.params.submission;
 
 	const submission = await Submission.findOne({_id})
@@ -105,7 +109,7 @@ module.exports.getSubmission = async (req, res) => {
 		return;
 	}
 
-	const {code, isHexdump} = await new Promise((resolve) => {
+	const {code, isHexdump} = await new Promise<{code: string, isHexdump: boolean}>((resolve) => {
 		// eslint-disable-next-line no-control-regex
 		if (
 			isValidUTF8(submission.code) &&
@@ -119,7 +123,7 @@ module.exports.getSubmission = async (req, res) => {
 
 		const hexdump = new Hexdump();
 		const concatter = concatStream((dump) => {
-			resolve({code: dump, isHexdump: true});
+			resolve({code: dump.toString(), isHexdump: true});
 		});
 
 		hexdump.pipe(concatter);
@@ -140,7 +144,7 @@ module.exports.getSubmission = async (req, res) => {
 	});
 };
 
-module.exports.getOldSubmission = async (req, res) => {
+export async function getOldSubmission(req: Request, res: Response) {
 	const _id = req.params.submission;
 
 	const submission = await Submission.findOne({_id})
@@ -160,7 +164,7 @@ module.exports.getOldSubmission = async (req, res) => {
 /*
  * GET /contest/:contest/submissions/:submission/raw
  */
-module.exports.getRawSubmission = async (req, res) => {
+export async function getRawSubmission(req: Request, res: Response) {
 	const _id = req.params.submission;
 
 	const submission = await Submission.findOne({_id})
