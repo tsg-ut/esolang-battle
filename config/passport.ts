@@ -5,11 +5,6 @@ import { NextFunction, Request, Response } from 'express';
 
 import User from '../models/User';
 
-interface IPassportUser {
-	id: any,
-	tokens: any,
-}
-
 const colors = [
 	'#777777',
 	'#b80000',
@@ -23,7 +18,7 @@ const colors = [
 ];
 
 passport.serializeUser((user, done) => {
-	done(null, (user as IPassportUser).id);
+	done(null, user.id);
 });
 
 passport.deserializeUser((id, done) => {
@@ -58,7 +53,7 @@ passport.use(
 						return;
 					}
 
-					const user = await User.findById((req.user as IPassportUser).id);
+					const user = await User.findById(req.user.id);
 
 					user.twitter = profile.id;
 					user.tokens.push({ kind: 'twitter', accessToken, tokenSecret });
@@ -120,7 +115,7 @@ export function isAuthenticated(req: Request, res: Response, next: NextFunction)
 export function isAuthorized(req: Request, res: Response, next: NextFunction) {
 	const provider = req.path.split('/').slice(-1)[0];
 
-	if (_.find((req.user as IPassportUser).tokens, { kind: provider })) {
+	if (_.find(req.user.tokens, { kind: provider })) {
 		next();
 		return;
 	}

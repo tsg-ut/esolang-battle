@@ -1,5 +1,8 @@
-const crypto = require('crypto');
-const mongoose = require('mongoose');
+import crypto from 'crypto';
+import mongoose from 'mongoose';
+import { ContestInfo } from './Contest';
+
+type TeamNumber = 0 | 1 | 2 | 3 | 4;
 
 const userSchema = new mongoose.Schema(
 	{
@@ -29,7 +32,7 @@ userSchema.methods.name = function() {
 	return `@${this.email.replace(/@.+$/, '')}`;
 };
 
-userSchema.methods.getTeam = function(contest) {
+userSchema.methods.getTeam = function(contest: ContestInfo) {
 	if (!this.team) {
 		return null;
 	}
@@ -42,7 +45,7 @@ userSchema.methods.getTeam = function(contest) {
 	return teamInfo.value;
 };
 
-userSchema.methods.setTeam = function(contest, newTeam) {
+userSchema.methods.setTeam = function(contest: ContestInfo, newTeam: TeamNumber) {
 	console.log(this.team);
 	this.team = this.team || [];
 
@@ -73,6 +76,32 @@ userSchema.methods.gravatar = function(size = 200) {
 	return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
 
-const User = mongoose.model('User', userSchema);
+export interface UserMethods extends mongoose.Document {
+	name(): string,
+	getTeam(contest: ContestInfo): TeamNumber,
+	setTeam(contest: ContestInfo, newTeam: TeamNumber): void,
+	gravatar(size: number): string,
+}
 
-module.exports = User;
+export interface UserInfo extends UserMethods {
+	email: string,
+	twitter: string,
+	tokens: any[],
+	team: {
+		contest: ContestInfo,
+		value: TeamNumber,
+	}[],
+	admin: boolean,
+	profile: {
+		name: string,
+		gender: string,
+		location: string,
+		website: string,
+		picture: string,
+	},
+	createdAt: Date,
+}
+
+const User = mongoose.model<UserInfo>('User', userSchema);
+
+export default User;

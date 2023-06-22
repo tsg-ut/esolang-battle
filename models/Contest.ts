@@ -1,5 +1,5 @@
-const moment = require('moment');
-const mongoose = require('mongoose');
+import moment from 'moment';
+import mongoose from 'mongoose';
 
 const contestSchema = new mongoose.Schema({
 	name: {type: String},
@@ -49,6 +49,24 @@ contestSchema.methods.spanText = function() {
 	return `${startText} - ${endText}`;
 };
 
-const Contest = mongoose.model('Contest', contestSchema);
+export interface ContestMethods extends mongoose.Document {
+	isOpen(): boolean,
+	isStarted(): boolean,
+	isEnded(): boolean,
+	spanText(): string,
+}
 
-module.exports = Contest;
+export interface ContestInfo extends ContestMethods {
+	name: string,
+	id: string,
+	start: Date,
+	end: Date,
+	description: {
+		ja: string,
+		en: string,
+	},
+}
+
+const Contest = mongoose.model<ContestInfo>('Contest', contestSchema);
+
+export default Contest;
