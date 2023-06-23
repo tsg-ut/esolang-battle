@@ -4,7 +4,7 @@ import concatStream from 'concat-stream';
 import {getLanguageMap, getCodeLimit} from '../controllers/utils';
 import languages from '../data/languages';
 import docker from '../engines/docker';
-import validation from '../lib/validation';
+import * as validation from '../lib/validation';
 import Contest from '../models/Contest';
 import Execution from '../models/Execution';
 import Language from '../models/Language';

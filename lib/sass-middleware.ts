@@ -1,10 +1,11 @@
-const fs = require('fs');
-const path = require('path');
-const sass = require('sass');
+import { NextFunction, Request, Response } from 'express';
+import fs from 'fs';
+import path from 'path';
+import sass from 'sass';
 
 const cache = new Map();
 
-module.exports = async function renderSass(req, res, next) {
+export async function renderSass(req: Request, res: Response, next: NextFunction) {
 	if (!req.path.endsWith('.css')) {
 		return next();
 	}

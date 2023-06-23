@@ -1,17 +1,17 @@
-const groupBy = require('lodash/groupBy');
+import groupBy from 'lodash/groupBy';
 
-module.exports.parse = (trace) => {
+export function parse(trace: string): string[] {
 	const lines = trace.split('\n').filter((line) => line.length);
 	const entries = lines.map((line) => ({
 		pid: parseInt(line.slice(0, 6)),
 		body: line.slice(6),
 	}));
 	const processes = groupBy(entries, (entry) => entry.pid);
-	const execs = [];
+	const execs: string[] = [];
 	for (const processEntries of Object.values(processes)) {
 		for (const entry of processEntries) {
-			let matches = null;
-			if ((matches = entry.body.match(/^(\w+)\("(.+?)"/))) {
+			const matches = entry.body.match(/^(\w+)\("(.+?)"/);
+			if (matches) {
 				const syscall = matches[1];
 				const arg = matches[2];
 

@@ -1,12 +1,14 @@
-const assert = require('assert');
-const shuffle = require('array-shuffle');
+import assert from 'assert';
+import {shuffle} from './shuffle';
 
-module.exports.generateInput = () => shuffle([
-	...Array.from({length: 10}, (e, i) => i),
-	...Array.from({length: 90}, () => Math.floor(Math.random() * 10)),
-]).join('');
+export function generateInput() {
+	return shuffle([
+		...Array.from({length: 10}, (e, i) => i),
+		...Array.from({length: 90}, () => Math.floor(Math.random() * 10)),
+	]).join('');
+}
 
-module.exports.isValidAnswer = (input, output) => {
+export function isValidAnswer(input: string, output: Buffer) {
 	assert(input.match(/^\d{100}$/));
 
 	if (process.env.NODE_ENV !== 'production') {

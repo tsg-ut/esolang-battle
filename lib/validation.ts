@@ -1,18 +1,19 @@
-const assert = require('assert');
-const slack = require('@slack/web-api');
-const contests = require('../contests');
-const langInfos = require('../data/infos.json');
-const langs = require('../data/langs.json');
-const docker = require('../engines/docker');
-const Language = require('../models/Language');
-const Submission = require('../models/Submission');
-const discord = require('./discord');
-const ptrace = require('./ptrace');
-const io = require('./socket-io');
+import assert from 'assert';
+import slack from '@slack/web-api';
+import contests from '../contests';
+import langInfos from '../data/infos.json';
+import langs from '../data/langs.json';
+import docker from '../engines/docker';
+import Language from '../models/Language';
+import Submission, { SubmissionInfo } from '../models/Submission';
+import * as discord from './discord';
+import * as ptrace from './ptrace';
+import io from './socket-io';
+import { ContestInfo } from '../models/Contest';
 
 const slackClient = new slack.WebClient(process.env.SLACK_TOKEN);
 
-const markError = (submission, error) => {
+function markError(submission: SubmissionInfo, error) {
 	console.error(error);
 	submission.status = 'error';
 	submission.error.name = error.name;
@@ -20,7 +21,7 @@ const markError = (submission, error) => {
 	submission.save();
 };
 
-const isValidTrace = (language, trace) => {
+function isValidTrace(language: string, trace: Buffer | null) {
 	if (trace === null) {
 		return true;
 	}
@@ -38,13 +39,21 @@ const isValidTrace = (language, trace) => {
 	return execs.length <= langInfo.execs.length;
 };
 
-module.exports.validate = async ({
+interface ValidationQuery {
+	submission: SubmissionInfo,
+	language,
+	solution: SubmissionInfo,
+	contest: ContestInfo,
+	noInputGeneration?: boolean,
+}
+
+export async function validate({
 	submission,
 	language,
 	solution,
 	contest,
-	noInputGeneration = false,
-}) => {
+	noInputGeneration,
+}: ValidationQuery) {
 	try {
 		assert({}.hasOwnProperty.call(contests, contest.id));
 		const {generateInput, isValidAnswer} = contests[contest.id];
@@ -68,10 +77,10 @@ module.exports.validate = async ({
 		}
 
 		const {stdout, stderr, duration, error, trace} = info;
-		newSubmission.stdout = stdout;
-		newSubmission.stderr = stderr;
+		newSubmission.stdout = stdout.toString();
+		newSubmission.stderr = stderr.toString();
 		newSubmission.duration = duration;
-		newSubmission.trace = trace;
+		newSubmission.trace = trace.toString();
 
 		if (error) {
 			await newSubmission.save();

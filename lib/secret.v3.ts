@@ -1,7 +1,7 @@
-const assert = require('assert');
-const shuffle = require('array-shuffle');
+import assert from 'assert';
+import {shuffle} from './shuffle';
 
-const sampleSize = require('lodash/sampleSize');
+import sampleSize from 'lodash/sampleSize';
 
 const triangleNumbers = [
 	0,
@@ -32,16 +32,18 @@ const notTriangleNumbers = Array.from({length: 256}, (e, i) => i).filter(
 	(n) => !triangleNumbers.includes(n),
 );
 
-module.exports.generateInput = () => shuffle([
-	...triangleNumbers,
-	triangleNumbers[Math.floor(Math.random() * triangleNumbers.length)],
-	triangleNumbers[Math.floor(Math.random() * triangleNumbers.length)],
-	...sampleSize(notTriangleNumbers, 25),
-])
-	.map((n) => `${n.toString(2).padStart(8, '0')}\n`)
-	.join('');
+export function generateInput() {
+	return shuffle([
+		...triangleNumbers,
+		triangleNumbers[Math.floor(Math.random() * triangleNumbers.length)],
+		triangleNumbers[Math.floor(Math.random() * triangleNumbers.length)],
+		...sampleSize(notTriangleNumbers, 25),
+	])
+		.map((n) => `${n.toString(2).padStart(8, '0')}\n`)
+		.join('');
+}
 
-module.exports.isValidAnswer = (input, output) => {
+export function isValidAnswer(input: string, output: Buffer) {
 	assert(input.match(/^([01]{8}\n){50}$/));
 
 	if (process.env.NODE_ENV !== 'production') {
