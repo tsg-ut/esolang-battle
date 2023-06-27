@@ -1,12 +1,11 @@
-const assert = require('assert');
-const mongoose = require('mongoose');
-const languagesData = require('../data/languages');
-const validation = require('../lib/validation');
-const Contest = require('../models/Contest');
-const Language = require('../models/Language');
-const Submission = require('../models/Submission');
-
-require('../models/User');
+import assert from 'assert';
+import mongoose from 'mongoose';
+import languagesData from '../data/languages';
+import * as validation from '../lib/validation';
+import Contest from '../models/Contest';
+import Language from '../models/Language';
+import Submission from '../models/Submission';
+import _ from '../models/User';
 
 mongoose.Promise = global.Promise;
 

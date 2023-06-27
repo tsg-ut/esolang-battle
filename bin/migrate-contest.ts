@@ -1,9 +1,9 @@
-const mongoose = require('mongoose');
-const Contest = require('../models/Contest');
-const Language = require('../models/Language');
-const Submission = require('../models/Submission');
-const Execution = require('../models/Execution');
-const User = require('../models/User');
+import mongoose from 'mongoose';
+import Contest from '../models/Contest';
+import Language from '../models/Language';
+import Submission from '../models/Submission';
+import Execution from '../models/Execution';
+import User from '../models/User';
 
 mongoose.Promise = global.Promise;
 
@@ -141,7 +141,8 @@ const contestIds = [
 			});
 			const newSolution = await NewSubmission.findOne({
 				input: language.solution.input,
-				output: language.solution.output,
+				stdout: language.solution.stdout,
+				stderr: language.solution.stderr,
 				createdAt: language.solution.createdAt,
 			});
 			newLanguage.solution = newSolution._id;

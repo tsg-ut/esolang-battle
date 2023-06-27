@@ -1,10 +1,9 @@
-const mongoose = require('mongoose');
-const langs = require('../data/langs.json');
-const docker = require('../engines/docker');
-const Language = require('../models/Language');
-const Submission = require('../models/Submission');
-
-require('../models/User');
+import mongoose from 'mongoose';
+import langs from '../data/langs.json';
+import docker from '../engines/docker';
+import Language from '../models/Language';
+import Submission from '../models/Submission';
+import _ from '../models/User';
 
 mongoose.Promise = global.Promise;
 
@@ -39,7 +38,7 @@ mongoose.Promise = global.Promise;
 				}
 
 				const {stdout: disasm} = disasmInfo;
-				submission.disasm = disasm;
+				submission.disasm = disasm.toString();
 				await submission.save();
 			}
 		}

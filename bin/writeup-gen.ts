@@ -1,11 +1,11 @@
-const mongoose = require('mongoose');
-const isValidUTF8 = require('utf-8-validate');
-const Contest = require('../models/Contest');
-const Language = require('../models/Language');
-require('../models/Submission');
-require('../models/User');
-const langs = require('../data/langs.json');
-const {stripIndent} = require('common-tags');
+import mongoose from 'mongoose';
+import isValidUTF8 from 'utf-8-validate';
+import Contest from '../models/Contest';
+import Language from '../models/Language';
+import _ from '../models/Submission';
+import __ from '../models/User';
+import langs from '../data/langs.json';
+import {stripIndent} from 'common-tags';
 
 mongoose.Promise = global.Promise;
 

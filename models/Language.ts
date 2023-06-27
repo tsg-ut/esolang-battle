@@ -15,7 +15,7 @@ const languageSchema = new mongoose.Schema(
 export interface LanguageMethods extends mongoose.Document { }
 
 export interface LanguageInfo extends LanguageMethods {
-	solution: SubmissionInfo,
+	solution: SubmissionInfo | null,
 	contest: ContestInfo,
 	oldId: string,
 	slug: string,

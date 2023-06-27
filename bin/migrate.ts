@@ -1,10 +1,7 @@
-const {stripIndent} = require('common-tags');
-const mongoose = require('mongoose');
-const docker = require('../engines/docker');
-const Contest = require('../models/Contest');
-const Language = require('../models/Language');
-const Submission = require('../models/Submission');
-const User = require('../models/User');
+import {stripIndent} from 'common-tags';
+import mongoose from 'mongoose';
+import Contest from '../models/Contest';
+import User from '../models/User';
 
 mongoose.Promise = global.Promise;
 
