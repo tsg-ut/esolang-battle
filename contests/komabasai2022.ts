@@ -1,6 +1,6 @@
-const assert = require('assert');
+import assert from 'assert';
 
-module.exports.getPrecedingIndices = (cellIndex) => {
+export function getPrecedingIndices(cellIndex: number): number[] {
 	const width = 5;
 	const height = 5;
 	assert(cellIndex >= 0);
@@ -9,7 +9,7 @@ module.exports.getPrecedingIndices = (cellIndex) => {
 	const x = cellIndex % width;
 	const y = Math.floor(cellIndex / width);
 
-	const precedingCells = [];
+	const precedingCells: number[] = [];
 	if (x - 1 >= 0) {
 		precedingCells.push(y * width + (x - 1));
 	}
@@ -28,7 +28,7 @@ module.exports.getPrecedingIndices = (cellIndex) => {
 	);
 };
 
-module.exports.generateInput = () => {
+export function generateInput(): string {
 	const dominoes = [...new Array(512)].map((v, i) => (i + 512)
 		.toString(2)
 		.replace(/0/g, '_')
@@ -43,7 +43,7 @@ module.exports.generateInput = () => {
 	return lines;
 };
 
-module.exports.isValidAnswer = (input, output) => {
+export function isValidAnswer(input: string, output: Buffer) {
 	const ansArray = input.trim().split('\n').map((d) => (d.slice(0, (d.indexOf('__') + 10) % 10 + 1).match(/\|/g) || []).length);
 	const outArray = output.toString().trim().split(/\s+/).map((s) => parseInt(s));
 	return ansArray.toString() === outArray.toString();

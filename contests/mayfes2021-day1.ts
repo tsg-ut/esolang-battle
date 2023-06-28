@@ -1,11 +1,11 @@
-const assert = require('assert');
-const concat = require('lodash/concat');
-const includes = require('lodash/includes');
-const range = require('lodash/range');
-const sample = require('lodash/sample');
-const shuffle = require('lodash/shuffle');
+import assert from 'assert';
+import concat from 'lodash/concat';
+import includes from 'lodash/includes';
+import range from 'lodash/range';
+import sample from 'lodash/sample';
+import shuffle from 'lodash/shuffle';
 
-module.exports.getPrecedingIndices = (cellIndex) => {
+export function getPrecedingIndices(cellIndex: number) {
 	const width = 5;
 	const height = 5;
 	assert(cellIndex >= 0);
@@ -14,7 +14,7 @@ module.exports.getPrecedingIndices = (cellIndex) => {
 	const x = cellIndex % width;
 	const y = Math.floor(cellIndex / width);
 
-	const precedingCells = [];
+	const precedingCells: number[] = [];
 	if (x - 1 >= 0) {
 		precedingCells.push(y * width + (x - 1));
 	}
@@ -41,7 +41,7 @@ const lineNum = 32;
 
 assert(lineNum > cases.length);
 
-module.exports.generateInput = () => {
+export function generateInput() {
 	const determinedNumbers = range(cases.length);
 	const randomNumbers = range(lineNum - cases.length).map(() => sample(range(cases.length)));
 	const numbers = shuffle(concat(determinedNumbers, randomNumbers));
@@ -50,7 +50,7 @@ module.exports.generateInput = () => {
 	return `${lines.join('\n')}\n`;
 };
 
-module.exports.isValidAnswer = (input, output) => {
+export function isValidAnswer(input: string, output: Buffer) {
 	const inputLines = input.trim().split('\n');
 
 	assert(inputLines.length === lineNum);

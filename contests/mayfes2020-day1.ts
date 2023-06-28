@@ -1,11 +1,9 @@
-const assert = require('assert');
-const flatten = require('lodash/flatten');
-const range = require('lodash/range');
-const sample = require('lodash/sample');
-const shuffle = require('lodash/shuffle');
-const zip = require('lodash/zip');
+import assert from 'assert';
+import range from 'lodash/range';
+import sample from 'lodash/sample';
+import shuffle from 'lodash/shuffle';
 
-module.exports.getPrecedingIndices = (cellIndex) => {
+export function getPrecedingIndices(cellIndex: number): number[] {
 	const width = 5;
 	const height = 5;
 	assert(cellIndex >= 0);
@@ -14,7 +12,7 @@ module.exports.getPrecedingIndices = (cellIndex) => {
 	const x = cellIndex % width;
 	const y = Math.floor(cellIndex / width);
 
-	const precedingCells = [];
+	const precedingCells: number[] = [];
 	if (x - 1 >= 0) {
 		precedingCells.push(y * width + (x - 1));
 	}
@@ -34,21 +32,21 @@ module.exports.getPrecedingIndices = (cellIndex) => {
 };
 
 const alphabets = range(26).map(
-	(i) => String.fromCharCode('a'.charCodeAt() + i) +
-		String.fromCharCode('A'.charCodeAt() + i),
+	(i) => String.fromCharCode('a'.charCodeAt(0) + i) +
+		String.fromCharCode('A'.charCodeAt(0) + i),
 );
 
-module.exports.generateInput = () => {
+export function generateInput() {
 	const n = sample(range(1, 26));
 	const numbers = shuffle(('1'.repeat(n) + '0'.repeat(26 - n)).split(''));
-	const letters = numbers.map((n, i) => String.fromCharCode(i + (n === '1' ? 'A' : 'a').charCodeAt()));
+	const letters = numbers.map((n, i) => String.fromCharCode(i + (n === '1' ? 'A' : 'a').charCodeAt(0)));
 
 	assert(letters.length === 26);
 
 	return `${letters.join('')}\n`;
 };
 
-module.exports.isValidAnswer = (input, output) => {
+export function isValidAnswer(input: string, output: Buffer) {
 	const chunks = input.split(/(?=[a-zA-Z])/);
 
 	assert(chunks.length === 26);
