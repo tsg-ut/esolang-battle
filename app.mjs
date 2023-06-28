@@ -264,6 +264,6 @@ const server = app.listen(app.get('port'), () => {
 	console.log('  Press CTRL-C to stop\n');
 });
 
-io.attach(server);
+io.default.attach(server);
 
 export default app;

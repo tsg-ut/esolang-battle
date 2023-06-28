@@ -1,5 +1,8 @@
-// http://stackoverflow.com/a/28288406/2864502
-const io = require('socket.io')();
+// Stemmed from https://stackoverflow.com/a/28288406/2864502
+
+import { Server } from 'socket.io';
+
+const io = new Server();
 
 io.on('connection', (socket) => {
 	console.log('Socket connected');
@@ -9,4 +12,4 @@ io.on('connection', (socket) => {
 	});
 });
 
-module.exports = io;
+export default io;
