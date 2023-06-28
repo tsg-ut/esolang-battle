@@ -1,5 +1,5 @@
 import assert from 'assert';
-import slack from '@slack/web-api';
+import { WebClient } from '@slack/web-api';
 import contests from '../contests';
 import langInfos from '../data/infos.json';
 import langs from '../data/langs.json';
@@ -11,7 +11,7 @@ import * as ptrace from './ptrace';
 import io from './socket-io';
 import { ContestInfo } from '../models/Contest';
 
-const slackClient = new slack.WebClient(process.env.SLACK_TOKEN);
+const slackClient = new WebClient(process.env.SLACK_TOKEN);
 
 function markError(submission: SubmissionInfo, error) {
 	console.error(error);
