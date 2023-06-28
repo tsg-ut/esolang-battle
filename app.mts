@@ -106,7 +106,6 @@ app.use(
 		secret: process.env.SESSION_SECRET,
 		store: MongoStore.create({
 			mongoUrl: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
-			autoReconnect: true,
 		}),
 	}),
 );
