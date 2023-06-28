@@ -5,7 +5,7 @@
  * Freely distributable for noncommercial purposes.
  */
 
-module.exports.points = [
+export const points = [
 	[0, 0, 1.024117],
 	[0.4314788, 0, 0.928785],
 	[-0.02106287, 0.4309644, 0.928785],
@@ -56,7 +56,7 @@ module.exports.points = [
 	[0, 0, -1.024117],
 ];
 
-module.exports.squares = [
+export const squares = [
 	[0, 1, 4, 2],
 	[3, 8, 14, 7],
 	[5, 10, 18, 11],
@@ -71,7 +71,7 @@ module.exports.squares = [
 	[43, 46, 47, 45],
 ];
 
-module.exports.hexagons = [
+export const hexagons = [
 	[0, 2, 6, 13, 8, 3],
 	[1, 5, 11, 17, 9, 4],
 	[7, 14, 22, 31, 23, 15],
@@ -82,7 +82,7 @@ module.exports.hexagons = [
 	[34, 41, 45, 47, 44, 39],
 ];
 
-module.exports.octagons = [
+export const octagons = [
 	[0, 3, 7, 15, 19, 10, 5, 1],
 	[2, 4, 9, 16, 25, 21, 12, 6],
 	[8, 13, 20, 28, 36, 30, 22, 14],

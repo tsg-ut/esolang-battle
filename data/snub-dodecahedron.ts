@@ -5,7 +5,7 @@
  * Freely distributable for noncommercial purposes.
  */
 
-module.exports.points = [
+export const points = [
 	[0, 0, 1.028031],
 	[0.4638569, 0, 0.9174342],
 	[0.2187436, 0.4090409, 0.9174342],
@@ -68,7 +68,7 @@ module.exports.points = [
 	[-0.3044499, -0.06760332, -0.979586],
 ];
 
-module.exports.triangles = [
+export const triangles = [
 	[0, 1, 2],
 	[0, 2, 3],
 	[0, 3, 4],
@@ -151,7 +151,7 @@ module.exports.triangles = [
 	[57, 59, 58],
 ];
 
-module.exports.pentagons = [
+export const pentagons = [
 	[0, 5, 14, 6, 1],
 	[2, 9, 20, 10, 3],
 	[4, 11, 23, 24, 12],

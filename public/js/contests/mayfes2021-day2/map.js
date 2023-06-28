@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls';
 import {TrackballControls} from 'three/addons/controls/TrackballControls';
 
-import truncatedCuboctahedron from '../../../../data/truncated-cuboctahedron';
+import * as truncatedCuboctahedron from '../../../../data/truncated-cuboctahedron';
 
 export default class {
 	constructor(element, onFacesUpdate, onClick) {
