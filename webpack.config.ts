@@ -1,7 +1,7 @@
-const path = require('path');
-const webpack = require('webpack');
+import path from 'path';
+import webpack from 'webpack';
 
-module.exports = (env, argv = {}) => {
+export function webpackConfigGenerator(env, argv: { mode?: "production" | "development" | "none" } = {}): webpack.Configuration {
 	const browsers = [
 		'last 2 chrome versions',
 		...(argv.mode === 'production'
@@ -18,31 +18,33 @@ module.exports = (env, argv = {}) => {
 		debug: true,
 	};
 
+	const entries = [
+		['contest-4', 'js/contests/4/index.babel.js'],
+		['contest-mayfes2018', 'js/contests/mayfes2018/index.babel.js'],
+		['contest-hackathon2018', 'js/contests/hackathon2018/index.babel.js'],
+		['check', 'js/check.babel.js'],
+		['contest-5', 'js/contests/5/index.babel.js'],
+		['contest-6', 'js/contests/6/index.babel.js'],
+		[
+			'contest-mayfes2020-day2',
+			'js/contests/mayfes2020-day2/index.babel.js',
+		],
+		[
+			'contest-mayfes2021-day2',
+			'js/contests/mayfes2021-day2/index.babel.js',
+		],
+	].map(([name, entry]) => ({
+		[name]: [
+			...(argv.mode === 'development'
+				? ['webpack-hot-middleware/client?reload=true']
+				: []),
+			path.join(__dirname, 'public', entry),
+		],
+	}));
+
 	return {
 		entry: Object.assign(
-			...[
-				['contest-4', 'js/contests/4/index.babel.js'],
-				['contest-mayfes2018', 'js/contests/mayfes2018/index.babel.js'],
-				['contest-hackathon2018', 'js/contests/hackathon2018/index.babel.js'],
-				['check', 'js/check.babel.js'],
-				['contest-5', 'js/contests/5/index.babel.js'],
-				['contest-6', 'js/contests/6/index.babel.js'],
-				[
-					'contest-mayfes2020-day2',
-					'js/contests/mayfes2020-day2/index.babel.js',
-				],
-				[
-					'contest-mayfes2021-day2',
-					'js/contests/mayfes2021-day2/index.babel.js',
-				],
-			].map(([name, entry]) => ({
-				[name]: [
-					...(argv.mode === 'development'
-						? ['webpack-hot-middleware/client?reload=true']
-						: []),
-					path.join(__dirname, 'public', entry),
-				],
-			})),
+			entries.shift(), ...entries
 		),
 		mode: argv.mode || 'development',
 		output: {

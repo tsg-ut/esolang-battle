@@ -45,14 +45,25 @@ import userController from './controllers/user.js';
 import { sassMiddleware } from './lib/sass-middleware.js';
 import io from './lib/socket-io.js';
 
-import webpackConfigGenerator from './webpack.config.js';
+import { webpackConfigGenerator } from './webpack.config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /*
  * Build-up Webpack compiler
  */
-const webpackConfig = webpackConfigGenerator({}, {mode: process.env.NODE_ENV});
+
+const nodeEnv = process.env.NODE_ENV;
+let webpackConfig: webpack.Configuration | null = null;
+if (nodeEnv) {
+	if (nodeEnv != "production" && nodeEnv != "development" && nodeEnv != "none") {
+		throw "You must set a correct value to NODE_ENV.";
+	}
+	webpackConfig = webpackConfigGenerator({}, { mode: nodeEnv });
+}
+else {
+	webpackConfig = webpackConfigGenerator({});
+}
 const compiler = webpack(webpackConfig);
 
 const upload = multer({
