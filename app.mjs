@@ -42,7 +42,7 @@ import homeController from './controllers/home.js';
 import submissionController from './controllers/submission.js';
 import userController from './controllers/user.js';
 
-import sassMiddleware from './lib/sass-middleware.js';
+import { sassMiddleware } from './lib/sass-middleware.js';
 import io from './lib/socket-io.js';
 
 import webpackConfigGenerator from './webpack.config.js';

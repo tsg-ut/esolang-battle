@@ -5,7 +5,7 @@ import sass from 'sass';
 
 const cache = new Map();
 
-export async function renderSass(req: Request, res: Response, next: NextFunction) {
+export async function sassMiddleware(req: Request, res: Response, next: NextFunction) {
 	if (!req.path.endsWith('.css')) {
 		return next();
 	}
