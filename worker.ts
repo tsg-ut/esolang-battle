@@ -1,11 +1,10 @@
 // Launch esolang-battle with worker mode.
 // This will be combined with polyglot-battle.
 
-const {Mutex} = require('async-mutex');
-const dotenv = require('dotenv');
-const dotenvExpand = require('dotenv-expand');
-const firebase = require('firebase-admin');
-const {v4: uuid} = require('uuid');
+import {Mutex} from 'async-mutex';
+import dotenv from 'dotenv';
+import dotenvExpand from 'dotenv-expand';
+import firebase from 'firebase-admin';
 import docker from './engines/docker.js';
 
 dotenvExpand.expand(dotenv.config({path: '.env'}));
