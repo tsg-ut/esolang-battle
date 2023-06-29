@@ -22,4 +22,4 @@ export function parse(trace: string): string[] {
 		}
 	}
 	return execs;
-};
+}

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import {Request, Response} from 'express';
 
 /*
  * GET /login
@@ -12,7 +12,7 @@ export function getLogin(req: Request, res: Response) {
 	res.render('account/login', {
 		title: 'Login',
 	});
-};
+}
 
 /*
  * GET /logout
@@ -24,7 +24,7 @@ export function logout(req: Request, res: Response) {
 			res.redirect('/');
 		}
 	});
-};
+}
 
 /*
  * GET /account
@@ -34,4 +34,4 @@ export function getAccount(req: Request, res: Response) {
 	res.render('account/profile', {
 		title: 'Account Management',
 	});
-};
+}

@@ -29,9 +29,9 @@ export function getPrecedingIndices(cellIndex: number) {
 	}
 
 	return precedingCells.filter(
-		(cell) => ![0, 4, 5, 9, 10, 14, 15, 19, 20, 24].includes(cell),
+		(cell) => ![0, 4, 5, 9, 10, 14, 15, 19, 20, 24].includes(cell)
 	);
-};
+}
 
 const ascendingCases = ['0123', '1230', '2301', '3012'];
 const descendingCases = ['3210', '0321', '1032', '2103'];
@@ -43,12 +43,14 @@ assert(lineNum > cases.length);
 
 export function generateInput() {
 	const determinedNumbers = range(cases.length);
-	const randomNumbers = range(lineNum - cases.length).map(() => sample(range(cases.length)));
+	const randomNumbers = range(lineNum - cases.length).map(() =>
+		sample(range(cases.length))
+	);
 	const numbers = shuffle(concat(determinedNumbers, randomNumbers));
 	const lines = numbers.map((n) => cases[n]);
 
 	return `${lines.join('\n')}\n`;
-};
+}
 
 export function isValidAnswer(input: string, output: Buffer) {
 	const inputLines = input.trim().split('\n');
@@ -63,4 +65,4 @@ export function isValidAnswer(input: string, output: Buffer) {
 	console.log('info:', {input, correctOutput, output, trimmedOutput});
 
 	return trimmedOutput === correctOutput;
-};
+}

@@ -1,6 +1,6 @@
 // Stemmed from https://stackoverflow.com/a/28288406/2864502
 
-import { Server } from 'socket.io';
+import {Server} from 'socket.io';
 
 const io = new Server();
 

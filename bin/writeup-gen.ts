@@ -1,11 +1,11 @@
+import {stripIndent} from 'common-tags';
 import mongoose from 'mongoose';
 import isValidUTF8 from 'utf-8-validate';
+import langs from '../data/langs.json';
 import Contest from '../models/Contest';
 import Language from '../models/Language';
 import _ from '../models/Submission';
 import __ from '../models/User';
-import langs from '../data/langs.json';
-import {stripIndent} from 'common-tags';
 
 mongoose.Promise = global.Promise;
 

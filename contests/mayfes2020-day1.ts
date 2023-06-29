@@ -27,24 +27,27 @@ export function getPrecedingIndices(cellIndex: number): number[] {
 	}
 
 	return precedingCells.filter(
-		(cell) => ![0, 4, 5, 9, 10, 14, 15, 19, 20, 24].includes(cell),
+		(cell) => ![0, 4, 5, 9, 10, 14, 15, 19, 20, 24].includes(cell)
 	);
-};
+}
 
 const alphabets = range(26).map(
-	(i) => String.fromCharCode('a'.charCodeAt(0) + i) +
-		String.fromCharCode('A'.charCodeAt(0) + i),
+	(i) =>
+		String.fromCharCode('a'.charCodeAt(0) + i) +
+		String.fromCharCode('A'.charCodeAt(0) + i)
 );
 
 export function generateInput() {
 	const n = sample(range(1, 26));
 	const numbers = shuffle(('1'.repeat(n) + '0'.repeat(26 - n)).split(''));
-	const letters = numbers.map((n, i) => String.fromCharCode(i + (n === '1' ? 'A' : 'a').charCodeAt(0)));
+	const letters = numbers.map((n, i) =>
+		String.fromCharCode(i + (n === '1' ? 'A' : 'a').charCodeAt(0))
+	);
 
 	assert(letters.length === 26);
 
 	return `${letters.join('')}\n`;
-};
+}
 
 export function isValidAnswer(input: string, output: Buffer) {
 	const chunks = input.split(/(?=[a-zA-Z])/);
@@ -59,4 +62,4 @@ export function isValidAnswer(input: string, output: Buffer) {
 	console.log('info:', {input, correctOutput, output, trimmedOutput});
 
 	return trimmedOutput === correctOutput;
-};
+}

@@ -5,7 +5,7 @@ import isValidUTF8 from 'utf-8-validate';
 import Language from '../models/Language';
 import Submission from '../models/Submission';
 import User from '../models/User';
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 
 /*
  * GET /submissions
@@ -37,7 +37,7 @@ export async function getSubmissions(req: Request, res: Response) {
 		}
 	}
 
-	const page = parseInt(req.query && req.query.page as string) || 0;
+	const page = parseInt(req.query && (req.query.page as string)) || 0;
 
 	if (req.query.status) {
 		query.status = req.query.status;
@@ -51,9 +51,7 @@ export async function getSubmissions(req: Request, res: Response) {
 		.limit(500)
 		.exec();
 
-	const totalSubmissions = await Submission.find(query)
-		.countDocuments()
-		.exec();
+	const totalSubmissions = await Submission.find(query).countDocuments().exec();
 
 	const users_id = await Submission.find({contest: req.contest})
 		.distinct('user')
@@ -69,8 +67,12 @@ export async function getSubmissions(req: Request, res: Response) {
 			const displayName = (team ? `team-${team.value}` : '') + user.name();
 			return {email: user.email, displayName};
 		})
-		.sort(({displayName: dispA}, {displayName: dispB}) => dispA.localeCompare(dispB));
-	const langs = langsRecord.sort(({slug: slugA}, {slug: slugB}) => slugA.localeCompare(slugB));
+		.sort(({displayName: dispA}, {displayName: dispB}) =>
+			dispA.localeCompare(dispB)
+		);
+	const langs = langsRecord.sort(({slug: slugA}, {slug: slugB}) =>
+		slugA.localeCompare(slugB)
+	);
 
 	res.render('submissions', {
 		contest: req.contest,
@@ -83,7 +85,7 @@ export async function getSubmissions(req: Request, res: Response) {
 		totalPages: Math.ceil(totalSubmissions / 500),
 		encode: qs.encode,
 	});
-};
+}
 
 /*
  * GET /submissions/:submission
@@ -104,12 +106,15 @@ export async function getSubmission(req: Request, res: Response) {
 
 	if (submission.contest.id !== req.params.contest) {
 		res.redirect(
-			`/contests/${submission.contest.id}/submissions/${submission._id}`,
+			`/contests/${submission.contest.id}/submissions/${submission._id}`
 		);
 		return;
 	}
 
-	const {code, isHexdump} = await new Promise<{code: string, isHexdump: boolean}>((resolve) => {
+	const {code, isHexdump} = await new Promise<{
+		code: string;
+		isHexdump: boolean;
+	}>((resolve) => {
 		// eslint-disable-next-line no-control-regex
 		if (
 			isValidUTF8(submission.code) &&
@@ -142,14 +147,12 @@ export async function getSubmission(req: Request, res: Response) {
 			req.user &&
 			req.user.getTeam(req.contest) === submission.user.getTeam(req.contest),
 	});
-};
+}
 
 export async function getOldSubmission(req: Request, res: Response) {
 	const _id = req.params.submission;
 
-	const submission = await Submission.findOne({_id})
-		.populate('contest')
-		.exec();
+	const submission = await Submission.findOne({_id}).populate('contest').exec();
 
 	if (submission === null) {
 		res.sendStatus(404);
@@ -157,9 +160,9 @@ export async function getOldSubmission(req: Request, res: Response) {
 	}
 
 	res.redirect(
-		`/contests/${submission.contest.id}/submissions/${submission._id}`,
+		`/contests/${submission.contest.id}/submissions/${submission._id}`
 	);
-};
+}
 
 /*
  * GET /contest/:contest/submissions/:submission/raw
@@ -167,9 +170,7 @@ export async function getOldSubmission(req: Request, res: Response) {
 export async function getRawSubmission(req: Request, res: Response) {
 	const _id = req.params.submission;
 
-	const submission = await Submission.findOne({_id})
-		.populate('user')
-		.exec();
+	const submission = await Submission.findOne({_id}).populate('user').exec();
 	const selfTeam =
 		req.user &&
 		req.user.getTeam(req.contest) === submission.user.getTeam(req.contest);
@@ -190,4 +191,4 @@ export async function getRawSubmission(req: Request, res: Response) {
 	});
 
 	res.send(submission.code);
-};
+}

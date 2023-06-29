@@ -1,15 +1,15 @@
 import assert from 'assert';
-import { WebClient } from '@slack/web-api';
+import {WebClient} from '@slack/web-api';
 import contests from '../contests';
 import langInfos from '../data/infos.json';
 import langs from '../data/langs.json';
 import docker from '../engines/docker';
 import Language from '../models/Language';
-import Submission, { SubmissionInfo } from '../models/Submission';
+import Submission, {SubmissionInfo} from '../models/Submission';
 import * as discord from './discord';
 import * as ptrace from './ptrace';
 import io from './socket-io';
-import { ContestInfo } from '../models/Contest';
+import {ContestInfo} from '../models/Contest';
 
 const slackClient = new WebClient(process.env.SLACK_TOKEN);
 
@@ -19,7 +19,7 @@ function markError(submission: SubmissionInfo, error) {
 	submission.error.name = error.name;
 	submission.error.stack = error.stack;
 	submission.save();
-};
+}
 
 function isValidTrace(language: string, trace: Buffer | null) {
 	if (trace === null) {
@@ -37,14 +37,14 @@ function isValidTrace(language: string, trace: Buffer | null) {
 
 	const execs = ptrace.parse(trace.toString());
 	return execs.length <= langInfo.execs.length;
-};
+}
 
 interface ValidationQuery {
-	submission: SubmissionInfo,
-	language,
-	solution: SubmissionInfo,
-	contest: ContestInfo,
-	noInputGeneration?: boolean,
+	submission: SubmissionInfo;
+	language;
+	solution: SubmissionInfo;
+	contest: ContestInfo;
+	noInputGeneration?: boolean;
 }
 
 export async function validate({
@@ -98,7 +98,7 @@ export async function validate({
 
 			Language.updateOne(
 				{slug: language.slug, contest},
-				{$set: {solution: newSubmission._id}},
+				{$set: {solution: newSubmission._id}}
 			).then(() => {
 				io.emit('update-languages', {});
 			});
@@ -150,7 +150,7 @@ export async function validate({
 						language.name
 					}**!! (${bytesInfo}) Congrats!!!\nhttps://esolang.hakatashi.com/submissions/${
 						populatedSubmission._id
-					}`,
+					}`
 				);
 				await slackClient.chat.postMessage({
 					channel: process.env.SLACK_CHANNEL,
@@ -186,9 +186,9 @@ export async function validate({
 
 			const result = await Submission.updateOne(
 				{_id: submission._id},
-				{$set: {disasm: disasmInfo.stdout}},
+				{$set: {disasm: disasmInfo.stdout}}
 			);
 			console.log({result});
 		}
 	}
-};
+}

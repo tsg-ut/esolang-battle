@@ -1,7 +1,10 @@
 import path from 'path';
 import webpack from 'webpack';
 
-export function webpackConfigGenerator(env, argv: { mode?: "production" | "development" | "none" } = {}): webpack.Configuration {
+export function webpackConfigGenerator(
+	env,
+	argv: {mode?: 'production' | 'development' | 'none'} = {}
+): webpack.Configuration {
 	const browsers = [
 		'last 2 chrome versions',
 		...(argv.mode === 'production'
@@ -25,14 +28,8 @@ export function webpackConfigGenerator(env, argv: { mode?: "production" | "devel
 		['check', 'js/check.babel.js'],
 		['contest-5', 'js/contests/5/index.babel.js'],
 		['contest-6', 'js/contests/6/index.babel.js'],
-		[
-			'contest-mayfes2020-day2',
-			'js/contests/mayfes2020-day2/index.babel.js',
-		],
-		[
-			'contest-mayfes2021-day2',
-			'js/contests/mayfes2021-day2/index.babel.js',
-		],
+		['contest-mayfes2020-day2', 'js/contests/mayfes2020-day2/index.babel.js'],
+		['contest-mayfes2021-day2', 'js/contests/mayfes2021-day2/index.babel.js'],
 	].map(([name, entry]) => ({
 		[name]: [
 			...(argv.mode === 'development'
@@ -43,9 +40,7 @@ export function webpackConfigGenerator(env, argv: { mode?: "production" | "devel
 	}));
 
 	return {
-		entry: Object.assign(
-			entries.shift(), ...entries
-		),
+		entry: Object.assign(entries.shift(), ...entries),
 		mode: argv.mode || 'development',
 		output: {
 			publicPath: '/js',
@@ -84,4 +79,4 @@ export function webpackConfigGenerator(env, argv: { mode?: "production" | "devel
 			}),
 		],
 	};
-};
+}

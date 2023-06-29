@@ -1,8 +1,8 @@
 import mongoose from 'mongoose';
 import Contest from '../models/Contest';
+import Execution from '../models/Execution';
 import Language from '../models/Language';
 import Submission from '../models/Submission';
-import Execution from '../models/Execution';
 import User from '../models/User';
 
 mongoose.Promise = global.Promise;
@@ -15,8 +15,12 @@ const contestIds = [
 ];
 
 (async () => {
-	const oldConnection = mongoose.createConnection('mongodb://localhost:27017/esolang-battle-hideo54');
-	const newConnection = mongoose.createConnection('mongodb://localhost:27017/esolang-battle');
+	const oldConnection = mongoose.createConnection(
+		'mongodb://localhost:27017/esolang-battle-hideo54',
+	);
+	const newConnection = mongoose.createConnection(
+		'mongodb://localhost:27017/esolang-battle',
+	);
 
 	const OldUser = oldConnection.model('User', User.schema);
 	const NewUser = newConnection.model('User', User.schema);
@@ -50,12 +54,14 @@ const contestIds = [
 		delete userObj._id;
 
 		const existingUser = await NewUser.findOne({email: user.email});
-		const newTeams = await Promise.all(userObj.team.filter((team) => (
-			contestIds.includes(team.contest.id)
-		)).map(async (team) => {
-			team.contest = await NewContest.findOne({id: team.contest.id});
-			return team;
-		}));
+		const newTeams = await Promise.all(
+			userObj.team
+				.filter((team) => contestIds.includes(team.contest.id))
+				.map(async (team) => {
+					team.contest = await NewContest.findOne({id: team.contest.id});
+					return team;
+				}),
+		);
 
 		if (existingUser) {
 			existingUser.team.push(...newTeams);
@@ -88,7 +94,10 @@ const contestIds = [
 			await newLanguage.save();
 		}
 
-		for (const submission of await OldSubmission.find({contest: oldContest}).populate('user').populate('language').exec()) {
+		for (const submission of await OldSubmission.find({contest: oldContest})
+			.populate('user')
+			.populate('language')
+			.exec()) {
 			const submissionObj = submission.toJSON();
 			delete submissionObj._id;
 
@@ -108,7 +117,12 @@ const contestIds = [
 		}
 
 		const oldLanguages = await OldLanguage.find({contest: oldContest});
-		for (const execution of await OldExecution.find({language: {$in: oldLanguages.map((language) => language._id)}}).populate('user').populate('language').exec()) {
+		for (const execution of await OldExecution.find({
+			language: {$in: oldLanguages.map((language) => language._id)},
+		})
+			.populate('user')
+			.populate('language')
+			.exec()) {
 			const executionObj = execution.toJSON();
 			delete executionObj._id;
 
@@ -130,7 +144,9 @@ const contestIds = [
 			await newExecution.save();
 		}
 
-		for (const language of await OldLanguage.find({contest: oldContest}).populate('solution').exec()) {
+		for (const language of await OldLanguage.find({contest: oldContest})
+			.populate('solution')
+			.exec()) {
 			if (language.solution === null) {
 				continue;
 			}

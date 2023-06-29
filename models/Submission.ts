@@ -1,8 +1,8 @@
 import moment from 'moment';
 import mongoose from 'mongoose';
-import { LanguageInfo } from './Language';
-import { ContestInfo } from './Contest';
-import { UserInfo } from './User';
+import {LanguageInfo} from './Language';
+import {ContestInfo} from './Contest';
+import {UserInfo} from './User';
 
 const submissionSchema = new mongoose.Schema(
 	{
@@ -27,40 +27,41 @@ const submissionSchema = new mongoose.Schema(
 			stack: String,
 		},
 	},
-	{timestamps: true},
+	{timestamps: true}
 );
 
-submissionSchema.methods.timeText = function() {
-	return moment(this.createdAt)
-		.utcOffset(9)
-		.format('YYYY/MM/DD HH:mm:ss');
+submissionSchema.methods.timeText = function () {
+	return moment(this.createdAt).utcOffset(9).format('YYYY/MM/DD HH:mm:ss');
 };
 
 export interface SubmissionMethods extends mongoose.Document {
-	timeText(): string
+	timeText(): string;
 }
 
 export interface SubmissionInfo extends SubmissionMethods {
-	user: UserInfo,
-	language: LanguageInfo,
-	contest: ContestInfo,
-	status: 'pending' | 'failed' | 'success' | 'error' | 'invalid',
-	code: Buffer,
-	size: number,
-	input: string,
-	stdout: string,
-	stderr: string,
-	trace: string,
-	disasm: string,
-	duration: number,
-	url: string,
+	user: UserInfo;
+	language: LanguageInfo;
+	contest: ContestInfo;
+	status: 'pending' | 'failed' | 'success' | 'error' | 'invalid';
+	code: Buffer;
+	size: number;
+	input: string;
+	stdout: string;
+	stderr: string;
+	trace: string;
+	disasm: string;
+	duration: number;
+	url: string;
 	error: {
-		name: string,
-		stack: string,
-	},
-	createdAt: Date,
+		name: string;
+		stack: string;
+	};
+	createdAt: Date;
 }
 
-const Submission = mongoose.model<SubmissionInfo>('Submission', submissionSchema);
+const Submission = mongoose.model<SubmissionInfo>(
+	'Submission',
+	submissionSchema
+);
 
 export default Submission;

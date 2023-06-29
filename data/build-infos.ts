@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import {promisify} from 'util';
-import * as ptrace from '../lib/ptrace.js';
+import {parse} from '../lib/ptrace.js';
 import langs from './langs.json';
 
 const traces = new Map();
@@ -15,11 +15,8 @@ const times = new Map();
 				path.join(process.argv[2], file),
 			);
 			traces.set(
-				file
-					.split('_')
-					.slice(0, -1)
-					.join('_'),
-				ptrace.parse(trace.toString()),
+				file.split('_').slice(0, -1).join('_'),
+				parse(trace.toString()),
 			);
 		}
 		if (file.endsWith('_hello.txt')) {
@@ -27,16 +24,8 @@ const times = new Map();
 				path.join(process.argv[2], file),
 			);
 			times.set(
-				file
-					.split('_')
-					.slice(0, -1)
-					.join('_'),
-				parseFloat(
-					info
-						.toString()
-						.trim()
-						.split(': ')[1],
-				),
+				file.split('_').slice(0, -1).join('_'),
+				parseFloat(info.toString().trim().split(': ')[1]),
 			);
 		}
 	}

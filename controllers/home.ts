@@ -1,15 +1,13 @@
 import {sample} from 'lodash';
 import Contest from '../models/Contest';
-import { Request, Response } from 'express';
+import {Request, Response} from 'express';
 
 /*
  * GET /
  * Home page.
  */
 export async function index(req: Request, res: Response) {
-	const contests = await Contest.find()
-		.sort({_id: -1})
-		.exec();
+	const contests = await Contest.find().sort({_id: -1}).exec();
 
 	res.render('home', {
 		title: 'Home',
@@ -44,4 +42,4 @@ export async function index(req: Request, res: Response) {
 			'Hello, World!', // Generic
 		]),
 	});
-};
+}

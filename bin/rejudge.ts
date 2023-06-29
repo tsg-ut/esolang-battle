@@ -1,7 +1,7 @@
 import assert from 'assert';
 import mongoose from 'mongoose';
 import languagesData from '../data/languages';
-import * as validation from '../lib/validation';
+import {validate} from '../lib/validation';
 import Contest from '../models/Contest';
 import Language from '../models/Language';
 import Submission from '../models/Submission';
@@ -43,7 +43,7 @@ mongoose.Promise = global.Promise;
 
 			console.log(`Rejudging submission ${submission._id}...`);
 
-			await validation.validate({
+			await validate({
 				submission,
 				language: languageData,
 				solution: null,

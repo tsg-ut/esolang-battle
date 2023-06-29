@@ -29,12 +29,12 @@ const timeout = (promise, msec) => {
 };
 
 interface DockerQuery {
-	id: string,
-	code: Buffer,
-	stdin: string,
-	trace: boolean,
-	disasm?: boolean,
-	imageId?: string,
+	id: string;
+	code: Buffer;
+	stdin: string;
+	trace: boolean;
+	disasm?: boolean;
+	imageId?: string;
 }
 
 export default async function execDocker({
@@ -55,15 +55,16 @@ export default async function execDocker({
 	const langInfo = langInfos.find(({slug}) => slug === id);
 	const trace = traceOption && langInfo && langInfo.time && langInfo.time <= 10;
 
-	const {tmpPath, cleanup}: {tmpPath: string, cleanup: () => void} = await new Promise((resolve, reject) => {
-		tmp.dir({unsafeCleanup: true}, (error, dTmpPath, dCleanup) => {
-			if (error) {
-				reject(error);
-			} else {
-				resolve({tmpPath: dTmpPath, cleanup: dCleanup});
-			}
+	const {tmpPath, cleanup}: {tmpPath: string; cleanup: () => void} =
+		await new Promise((resolve, reject) => {
+			tmp.dir({unsafeCleanup: true}, (error, dTmpPath, dCleanup) => {
+				if (error) {
+					reject(error);
+				} else {
+					resolve({tmpPath: dTmpPath, cleanup: dCleanup});
+				}
+			});
 		});
-	});
 
 	const stdinPath = path.join(tmpPath, 'INPUT');
 
@@ -174,7 +175,7 @@ export default async function execDocker({
 		const executionStart = Date.now();
 		const [stdout, stderr, containerData] = await timeout(
 			runner,
-			getTimeLimit(id),
+			getTimeLimit(id)
 		);
 		const executionEnd = Date.now();
 
@@ -189,9 +190,9 @@ export default async function execDocker({
 			duration: executionEnd - executionStart,
 			...(containerData.State.OOMKilled
 				? {
-					error: new MemoryLimitExceededError(
-						`Memory limit of ${memoryLimit} bytes exceeded`,
-					),
+						error: new MemoryLimitExceededError(
+							`Memory limit of ${memoryLimit} bytes exceeded`
+						),
 				  }
 				: {}),
 			trace: trace ? traceLog : null,
@@ -207,4 +208,4 @@ export default async function execDocker({
 		}
 		throw error;
 	}
-};
+}

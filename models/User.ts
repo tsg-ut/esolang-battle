@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 import mongoose from 'mongoose';
-import { ContestInfo } from './Contest';
+import {ContestInfo} from './Contest';
 
 type TeamNumber = 0 | 1 | 2 | 3 | 4;
 
@@ -25,14 +25,14 @@ const userSchema = new mongoose.Schema(
 			picture: String,
 		},
 	},
-	{timestamps: true},
+	{timestamps: true}
 );
 
-userSchema.methods.name = function() {
+userSchema.methods.name = function () {
 	return `@${this.email.replace(/@.+$/, '')}`;
 };
 
-userSchema.methods.getTeam = function(contest: ContestInfo) {
+userSchema.methods.getTeam = function (contest: ContestInfo) {
 	if (!this.team) {
 		return null;
 	}
@@ -45,7 +45,10 @@ userSchema.methods.getTeam = function(contest: ContestInfo) {
 	return teamInfo.value;
 };
 
-userSchema.methods.setTeam = function(contest: ContestInfo, newTeam: TeamNumber) {
+userSchema.methods.setTeam = function (
+	contest: ContestInfo,
+	newTeam: TeamNumber
+) {
 	console.log(this.team);
 	this.team = this.team || [];
 
@@ -65,41 +68,38 @@ userSchema.methods.setTeam = function(contest: ContestInfo, newTeam: TeamNumber)
 /*
  * Helper method for getting user's gravatar.
  */
-userSchema.methods.gravatar = function(size = 200) {
+userSchema.methods.gravatar = function (size = 200) {
 	if (!this.email) {
 		return `https://gravatar.com/avatar/?s=${size}&d=retro`;
 	}
-	const md5 = crypto
-		.createHash('md5')
-		.update(this.email)
-		.digest('hex');
+	const md5 = crypto.createHash('md5').update(this.email).digest('hex');
 	return `https://gravatar.com/avatar/${md5}?s=${size}&d=retro`;
 };
 
 export interface UserMethods extends mongoose.Document {
-	name(): string,
-	getTeam(contest: ContestInfo): TeamNumber,
-	setTeam(contest: ContestInfo, newTeam: TeamNumber): void,
-	gravatar(size: number): string,
+	name(): string;
+	getTeam(contest: ContestInfo): TeamNumber;
+	setTeam(contest: ContestInfo, newTeam: TeamNumber): void;
+	gravatar(size: number): string;
 }
 
 export interface UserInfo extends UserMethods {
-	email: string,
-	twitter: string,
-	tokens: any[],
+	email: string;
+	twitter: string;
+	tokens: any[];
 	team: {
-		contest: ContestInfo,
-		value: TeamNumber,
-	}[],
-	admin: boolean,
+		contest: ContestInfo;
+		value: TeamNumber;
+	}[];
+	admin: boolean;
 	profile: {
-		name: string,
-		gender: string,
-		location: string,
-		website: string,
-		picture: string,
-	},
-	createdAt: Date,
+		name: string;
+		gender: string;
+		location: string;
+		website: string;
+		picture: string;
+	};
+	createdAt: Date;
 }
 
 const User = mongoose.model<UserInfo>('User', userSchema);

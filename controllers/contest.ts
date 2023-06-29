@@ -4,7 +4,7 @@ import MarkdownIt from 'markdown-it';
 import {getLanguageMap} from '../controllers/utils';
 import Contest from '../models/Contest';
 import User from '../models/User';
-import { NextFunction, Request, Response } from 'express';
+import {NextFunction, Request, Response} from 'express';
 
 /*
  * Middleware for all /contest/:contest routes
@@ -19,7 +19,7 @@ export async function base(req: Request, res: Response, next: NextFunction) {
 
 	req.contest = contest;
 	next();
-};
+}
 
 /*
  * GET /
@@ -34,7 +34,7 @@ export async function index(req: Request, res: Response) {
 		classnames,
 		hideFooter: true,
 	});
-};
+}
 
 export function rule(req: Request, res: Response) {
 	const markdown = new MarkdownIt();
@@ -46,7 +46,7 @@ export function rule(req: Request, res: Response) {
 			en: markdown.render(req.contest.description.en),
 		},
 	});
-};
+}
 
 /*
  * GET /contest/:contest/admin
@@ -59,7 +59,10 @@ export async function getAdmin(req: Request, res: Response) {
 
 	if (req.query.user && req.query.team) {
 		const user = await User.findOne({_id: req.query.user});
-		user.setTeam(req.contest, parseInt(req.query.team as string) as 0 | 1 | 2 | 3 | 4);
+		user.setTeam(
+			req.contest,
+			parseInt(req.query.team as string) as 0 | 1 | 2 | 3 | 4
+		);
 		await user.save();
 		res.redirect(`/contests/${req.params.contest}/admin`);
 		return;
@@ -74,7 +77,7 @@ export async function getAdmin(req: Request, res: Response) {
 		colors: ['#ef2011', '#0e30ec', '#167516', '#f57f17', '#6a1b9a'],
 		qs,
 	});
-};
+}
 
 /*
  * GET /contest/:contest/check
@@ -95,4 +98,4 @@ export async function getCheck(req: Request, res: Response) {
 		contest: req.contest,
 		availableLanguages,
 	});
-};
+}

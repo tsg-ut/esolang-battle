@@ -21,5 +21,7 @@ if (process.env.DISCORD_TOKEN) {
 
 export async function send(...args) {
 	await readyPromise;
-	return (client.channels.cache.get(process.env.DISCORD_CHANNEL) as any).send(...args);
-};
+	return (client.channels.cache.get(process.env.DISCORD_CHANNEL) as any).send(
+		...args
+	);
+}

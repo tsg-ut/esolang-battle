@@ -4,32 +4,11 @@ import {shuffle} from './shuffle';
 import sampleSize from 'lodash/sampleSize';
 
 const triangleNumbers = [
-	0,
-	1,
-	3,
-	6,
-	10,
-	15,
-	21,
-	28,
-	36,
-	45,
-	55,
-	66,
-	78,
-	91,
-	105,
-	120,
-	136,
-	153,
-	171,
-	190,
-	210,
-	231,
-	253,
+	0, 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91, 105, 120, 136, 153, 171,
+	190, 210, 231, 253,
 ];
 const notTriangleNumbers = Array.from({length: 256}, (e, i) => i).filter(
-	(n) => !triangleNumbers.includes(n),
+	(n) => !triangleNumbers.includes(n)
 );
 
 export function generateInput() {
@@ -58,11 +37,8 @@ export function isValidAnswer(input: string, output: Buffer) {
 	assert(correctOutput.length === 50);
 
 	// Trim
-	const trimmedOutput = output
-		.toString()
-		.replace(/\s/g, '')
-		.trim();
+	const trimmedOutput = output.toString().replace(/\s/g, '').trim();
 	console.log(input, correctOutput);
 
 	return trimmedOutput === correctOutput;
-};
+}

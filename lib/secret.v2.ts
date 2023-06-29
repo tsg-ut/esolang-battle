@@ -25,4 +25,4 @@ export function isValidAnswer(input: string, output: Buffer) {
 	const trimmedOutput = output.toString().trim();
 
 	return trimmedOutput === correctOutput;
-};
+}

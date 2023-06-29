@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
-import { UserInfo } from './User';
-import { LanguageInfo } from './Language';
+import {UserInfo} from './User';
+import {LanguageInfo} from './Language';
 
 const executionSchema = new mongoose.Schema(
 	{
@@ -12,20 +12,20 @@ const executionSchema = new mongoose.Schema(
 		stderr: String,
 		duration: Number,
 	},
-	{timestamps: true},
+	{timestamps: true}
 );
 
-export interface ExecutionMethods extends mongoose.Document { }
+export interface ExecutionMethods extends mongoose.Document {}
 
 export interface ExecutionInfo extends ExecutionMethods {
-	user: UserInfo,
-	language: LanguageInfo,
-	code: Buffer,
-	input: string,
-	stdout: string,
-	stderr: string,
-	duration: number,
-	createdAt: Date,
+	user: UserInfo;
+	language: LanguageInfo;
+	code: Buffer;
+	input: string;
+	stdout: string;
+	stderr: string;
+	duration: number;
+	createdAt: Date;
 }
 
 const Execution = mongoose.model<ExecutionInfo>('Execution', executionSchema);

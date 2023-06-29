@@ -10,8 +10,8 @@ import Execution from '../models/Execution';
 import Language from '../models/Language';
 import Submission from '../models/Submission';
 import {Mutex} from 'async-mutex';
-import { NextFunction, Request, Response, Express } from 'express';
-import { isArray } from 'lodash';
+import {NextFunction, Request, Response, Express} from 'express';
+import {isArray} from 'lodash';
 
 const executionMutex = new Mutex();
 const apiKey = process.env.API_KEY || crypto.randomBytes(64).toString('hex');
@@ -29,12 +29,16 @@ export async function contest(req: Request, res: Response, next: NextFunction) {
 
 	req.contest = contest;
 	next();
-};
+}
 
 /*
  * GET /api/contests/:contest/languages
  */
-export async function getLanguages(req: Request, res: Response, next: NextFunction) {
+export async function getLanguages(
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
 	// FIXME: visibility test
 	try {
 		const languageMap = await getLanguageMap({
@@ -46,12 +50,16 @@ export async function getLanguages(req: Request, res: Response, next: NextFuncti
 		return next(error);
 	}
 	return undefined;
-};
+}
 
 /*
  * GET /api/contests/:contest/submission
  */
-export async function getSubmission(req: Request, res: Response, next: NextFunction) {
+export async function getSubmission(
+	req: Request,
+	res: Response,
+	next: NextFunction
+) {
 	try {
 		const submission = await Submission.findOne({_id: req.query._id})
 			.populate('user')
@@ -70,7 +78,7 @@ export async function getSubmission(req: Request, res: Response, next: NextFunct
 	} catch (error) {
 		return next(error);
 	}
-};
+}
 
 /*
  * POST /api/execution
@@ -84,20 +92,22 @@ export async function postExecution(req: Request, res: Response) {
 		assert(code.length >= 1, 'Code cannot be empty');
 		assert(
 			code.length <= getCodeLimit(req.body.language),
-			'Code cannot be longer than 10,000 bytes',
+			'Code cannot be longer than 10,000 bytes'
 		);
 
 		const input = req.body.input ?? '';
 
 		assert(input.length <= 10000, 'Input cannot be longer than 10,000 bytes');
 
-		const info = await executionMutex.runExclusive(() => docker({
-			id: req.body.language,
-			code,
-			stdin: input,
-			trace: true,
-			imageId: req.body.imageId,
-		}));
+		const info = await executionMutex.runExclusive(() =>
+			docker({
+				id: req.body.language,
+				code,
+				stdin: input,
+				trace: true,
+				imageId: req.body.imageId,
+			})
+		);
 
 		if (typeof info !== 'object') {
 			throw new Error('info is not object');
@@ -131,7 +141,7 @@ export async function postExecution(req: Request, res: Response) {
 		// eslint-disable-next-line callback-return
 		res.status(400).json({error: error.message});
 	}
-};
+}
 
 /*
  * POST /api/contest/:contest/execution
@@ -148,7 +158,7 @@ export async function postContestExecution(req: Request, res: Response) {
 			if (req.files && req.files.file && req.files.file.length === 1) {
 				assert(
 					req.files.file[0].size < getCodeLimit(req.body.language),
-					'Code cannot be longer than 10,000 bytes',
+					'Code cannot be longer than 10,000 bytes'
 				);
 				code = await new Promise((resolve) => {
 					const stream = concatStream(resolve);
@@ -164,7 +174,7 @@ export async function postContestExecution(req: Request, res: Response) {
 		assert(code.length >= 1, 'Code cannot be empty');
 		assert(
 			code.length <= getCodeLimit(req.body.language),
-			'Code cannot be longer than 10,000 bytes',
+			'Code cannot be longer than 10,000 bytes'
 		);
 
 		const input = req.body.input.replace(/\r\n/g, '\n') || '';
@@ -172,7 +182,7 @@ export async function postContestExecution(req: Request, res: Response) {
 		assert(input.length <= 10000, 'Input cannot be longer than 10,000 bytes');
 
 		const languageData = languages[req.contest.id].find(
-			(l) => l && l.slug === req.body.language,
+			(l) => l && l.slug === req.body.language
 		);
 
 		if (languageData === undefined) {
@@ -209,12 +219,14 @@ export async function postContestExecution(req: Request, res: Response) {
 			return newLanguage;
 		})();
 
-		const info = await executionMutex.runExclusive(() => docker({
-			id: language.slug,
-			code,
-			stdin: input,
-			trace: false,
-		}));
+		const info = await executionMutex.runExclusive(() =>
+			docker({
+				id: language.slug,
+				code,
+				stdin: input,
+				trace: false,
+			})
+		);
 
 		if (typeof info !== 'object') {
 			throw new Error('info is not object');
@@ -247,7 +259,7 @@ export async function postContestExecution(req: Request, res: Response) {
 		// eslint-disable-next-line callback-return
 		res.status(400).json({error: error.message});
 	}
-};
+}
 
 /*
  * POST /api/contest/:contest/submission
@@ -264,7 +276,7 @@ export async function postSubmission(req: Request, res: Response) {
 			if (req.files && req.files.file && req.files.file.length === 1) {
 				assert(
 					req.files.file[0].size < getCodeLimit(req.body.language),
-					'Code cannot be longer than 10,000 bytes',
+					'Code cannot be longer than 10,000 bytes'
 				);
 				code = await new Promise((resolve) => {
 					const stream = concatStream(resolve);
@@ -280,11 +292,11 @@ export async function postSubmission(req: Request, res: Response) {
 		assert(code.length >= 1, 'Code cannot be empty');
 		assert(
 			code.length <= getCodeLimit(req.body.language),
-			'Code cannot be longer than 10,000 bytes',
+			'Code cannot be longer than 10,000 bytes'
 		);
 
 		const languageData = languages[req.contest.id].find(
-			(l) => l && l.slug === req.body.language,
+			(l) => l && l.slug === req.body.language
 		);
 
 		if (languageData === undefined) {
@@ -354,4 +366,4 @@ export async function postSubmission(req: Request, res: Response) {
 		// eslint-disable-next-line callback-return
 		res.status(400).json({error: error.message});
 	}
-};
+}

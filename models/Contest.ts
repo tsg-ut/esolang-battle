@@ -12,7 +12,7 @@ const contestSchema = new mongoose.Schema({
 	},
 });
 
-contestSchema.methods.isOpen = function() {
+contestSchema.methods.isOpen = function () {
 	if (process.env.NODE_ENV === 'development') {
 		return true;
 	}
@@ -21,7 +21,7 @@ contestSchema.methods.isOpen = function() {
 	return this.start <= now && now <= this.end;
 };
 
-contestSchema.methods.isStarted = function() {
+contestSchema.methods.isStarted = function () {
 	if (process.env.NODE_ENV === 'development') {
 		return true;
 	}
@@ -30,7 +30,7 @@ contestSchema.methods.isStarted = function() {
 	return this.start <= now;
 };
 
-contestSchema.methods.isEnded = function() {
+contestSchema.methods.isEnded = function () {
 	if (process.env.NODE_ENV === 'development') {
 		return false;
 	}
@@ -39,32 +39,30 @@ contestSchema.methods.isEnded = function() {
 	return this.end < now;
 };
 
-contestSchema.methods.spanText = function() {
+contestSchema.methods.spanText = function () {
 	const startText = moment(this.start)
 		.utcOffset(9)
 		.format('YYYY/MM/DD HH:mm:ss');
-	const endText = moment(this.end)
-		.utcOffset(9)
-		.format('YYYY/MM/DD HH:mm:ss');
+	const endText = moment(this.end).utcOffset(9).format('YYYY/MM/DD HH:mm:ss');
 	return `${startText} - ${endText}`;
 };
 
 export interface ContestMethods extends mongoose.Document {
-	isOpen(): boolean,
-	isStarted(): boolean,
-	isEnded(): boolean,
-	spanText(): string,
+	isOpen(): boolean;
+	isStarted(): boolean;
+	isEnded(): boolean;
+	spanText(): string;
 }
 
 export interface ContestInfo extends ContestMethods {
-	name: string,
-	id: string,
-	start: Date,
-	end: Date,
+	name: string;
+	id: string;
+	start: Date;
+	end: Date;
 	description: {
-		ja: string,
-		en: string,
-	},
+		ja: string;
+		en: string;
+	};
 }
 
 const Contest = mongoose.model<ContestInfo>('Contest', contestSchema);

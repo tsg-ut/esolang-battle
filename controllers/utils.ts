@@ -20,7 +20,7 @@ export async function getLanguageMap({team = null, contest}) {
 		if (language && language.type === 'language') {
 			return Object.assign({}, language, {
 				record: languageRecords.find(
-					(languageRecord) => languageRecord.slug === language.slug,
+					(languageRecord) => languageRecord.slug === language.slug
 				),
 			});
 		}
@@ -82,10 +82,11 @@ export async function getLanguageMap({team = null, contest}) {
 					cell.team === team ||
 					solvedTeam === team ||
 					precedingCells.some(
-						(c) => c.team === team ||
+						(c) =>
+							c.team === team ||
 							(c.record &&
 								c.record.solution &&
-								c.record.solution.user.getTeam(contest)) === team,
+								c.record.solution.user.getTeam(contest)) === team
 					));
 
 			if (cell.record && cell.record.solution) {
@@ -109,8 +110,9 @@ export async function getLanguageMap({team = null, contest}) {
 
 			if (
 				precedingCells.some(
-					(c) => c.type === 'base' ||
-						(c.type === 'language' && c.record && c.record.solution),
+					(c) =>
+						c.type === 'base' ||
+						(c.type === 'language' && c.record && c.record.solution)
 				)
 			) {
 				return {
@@ -139,7 +141,7 @@ export async function getLanguageMap({team = null, contest}) {
 			type: 'unknown',
 		};
 	});
-};
+}
 
 export function getCodeLimit(languageId: string) {
 	if (['fernando', 'pure-folders'].includes(languageId)) {
@@ -161,7 +163,7 @@ export function getCodeLimit(languageId: string) {
 	}
 
 	return 10 * 1024;
-};
+}
 
 export function getTimeLimit(languageId: string) {
 	if (['kotlin', 'husk'].includes(languageId)) {
@@ -169,4 +171,4 @@ export function getTimeLimit(languageId: string) {
 	}
 
 	return 10 * 1000;
-};
+}

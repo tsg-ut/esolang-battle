@@ -42,10 +42,10 @@ import homeController from './controllers/home.js';
 import submissionController from './controllers/submission.js';
 import userController from './controllers/user.js';
 
-import { sassMiddleware } from './lib/sass-middleware.js';
+import {sassMiddleware} from './lib/sass-middleware.js';
 import io from './lib/socket-io.js';
 
-import { webpackConfigGenerator } from './webpack.config.js';
+import {webpackConfigGenerator} from './webpack.config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -56,12 +56,15 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nodeEnv = process.env.NODE_ENV;
 let webpackConfig: webpack.Configuration | null = null;
 if (nodeEnv) {
-	if (nodeEnv != "production" && nodeEnv != "development" && nodeEnv != "none") {
-		throw "You must set a correct value to NODE_ENV.";
+	if (
+		nodeEnv != 'production' &&
+		nodeEnv != 'development' &&
+		nodeEnv != 'none'
+	) {
+		throw 'You must set a correct value to NODE_ENV.';
 	}
-	webpackConfig = webpackConfigGenerator({}, { mode: nodeEnv });
-}
-else {
+	webpackConfig = webpackConfigGenerator({}, {mode: nodeEnv});
+} else {
 	webpackConfig = webpackConfigGenerator({});
 }
 const compiler = webpack(webpackConfig);
@@ -87,8 +90,8 @@ mongoose.connect(process.env.MONGODB_URI || process.env.MONGOLAB_URI);
 mongoose.connection.on('error', () => {
 	throw new Error(
 		`${chalk.red(
-			'✗',
-		)} MongoDB connection error. Please make sure MongoDB is running.`,
+			'✗'
+		)} MongoDB connection error. Please make sure MongoDB is running.`
 	);
 });
 
@@ -101,7 +104,7 @@ app.set('view engine', 'pug');
 app.use(compression());
 app.use(sassMiddleware);
 app.use(
-	webpackDevMiddleware(compiler, {publicPath: webpackConfig.output.publicPath}),
+	webpackDevMiddleware(compiler, {publicPath: webpackConfig.output.publicPath})
 );
 if (process.env.NODE_ENV === 'development') {
 	app.use(webpackHotMiddleware(compiler));
@@ -118,7 +121,7 @@ app.use(
 		store: MongoStore.create({
 			mongoUrl: process.env.MONGODB_URI || process.env.MONGOLAB_URI,
 		}),
-	}),
+	})
 );
 app.use(passport.initialize());
 app.use(passport.session());
@@ -131,7 +134,8 @@ app.use((req, res, next) => {
 app.use(lusca.xframe('SAMEORIGIN'));
 app.use(lusca.xssProtection(true));
 app.use(async (req, res, next) => {
-	const hash = await fs.readFile(path.resolve(__dirname, '.git/refs/heads/master'))
+	const hash = await fs
+		.readFile(path.resolve(__dirname, '.git/refs/heads/master'))
 		.catch(() => Math.floor(Math.random() * 1e10));
 
 	res.locals.user = req.user;
@@ -167,44 +171,44 @@ router.get('/logout', userController.logout);
 router.get(
 	'/account',
 	passportConfig.isAuthenticated,
-	userController.getAccount,
+	userController.getAccount
 );
 router.get(
 	'/contests/:contest',
 	contestController.base,
-	contestController.index,
+	contestController.index
 );
 router.get(
 	'/contests/:contest/rule',
 	contestController.base,
-	contestController.rule,
+	contestController.rule
 );
 router.get(
 	'/contests/:contest/submissions',
 	contestController.base,
-	submissionController.getSubmissions,
+	submissionController.getSubmissions
 );
 router.get(
 	'/contests/:contest/submissions/:submission',
 	contestController.base,
-	submissionController.getSubmission,
+	submissionController.getSubmission
 );
 router.get(
 	'/contests/:contest/submissions/:submission/raw',
 	contestController.base,
-	submissionController.getRawSubmission,
+	submissionController.getRawSubmission
 );
 router.get(
 	'/contests/:contest/admin',
 	passportConfig.isAuthenticated,
 	contestController.base,
-	contestController.getAdmin,
+	contestController.getAdmin
 );
 router.get(
 	'/contests/:contest/check',
 	passportConfig.isAuthenticated,
 	contestController.base,
-	contestController.getCheck,
+	contestController.getCheck
 );
 
 router.get('/submissions/:submission', submissionController.getOldSubmission);
@@ -212,32 +216,32 @@ router.get('/submissions/:submission', submissionController.getOldSubmission);
 router.post(
 	'/api/execution',
 	check('token', 'Please specify valid token').equals(apiKey),
-	apiController.postExecution,
+	apiController.postExecution
 );
 router.get(
 	'/api/contests/:contest/submission',
 	passportConfig.isAuthenticated,
 	apiController.contest,
-	apiController.getSubmission,
+	apiController.getSubmission
 );
 router.post(
 	'/api/contests/:contest/submission',
 	check('language', 'Please Specify language').exists(),
 	passportConfig.isAuthenticated,
 	apiController.contest,
-	apiController.postSubmission,
+	apiController.postSubmission
 );
 router.post(
 	'/api/contests/:contest/execution',
 	check('language', 'Please Specify language').exists(),
 	passportConfig.isAuthenticated,
 	apiController.contest,
-	apiController.postContestExecution,
+	apiController.postContestExecution
 );
 router.get(
 	'/api/contests/:contest/languages',
 	apiController.contest,
-	apiController.getLanguages,
+	apiController.getLanguages
 );
 
 /*
@@ -249,7 +253,7 @@ router.get(
 	passport.authenticate('twitter', {failureRedirect: '/login'}),
 	(req, res) => {
 		res.redirect(req.session.returnTo || '/');
-	},
+	}
 );
 
 app.use(router);
@@ -269,7 +273,7 @@ const server = app.listen(app.get('port'), () => {
 		'%s App is running at http://localhost:%d in %s mode',
 		chalk.green('✓'),
 		app.get('port'),
-		app.get('env'),
+		app.get('env')
 	);
 	console.log('  Press CTRL-C to stop\n');
 });
