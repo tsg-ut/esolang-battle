@@ -119,6 +119,7 @@
     "./*",
   ],
   "exclude": [
-    "./contests/*.js"
+    "./contests/*.js",
+    "./data/languages/*.js"
   ]
 }

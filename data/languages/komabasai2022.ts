@@ -1,6 +1,6 @@
-const assert = require('assert');
-const flatten = require('lodash/flatten');
-const langsData = require('../langs.json');
+import assert from 'assert';
+import flatten from 'lodash/flatten';
+import langsData from '../langs.json';
 
 const languages = [
 	['', 'fish', 'produire', 'cpp-clang', ''],
@@ -10,7 +10,7 @@ const languages = [
 	['', 'ruby', 'aheui', 'ocaml', ''],
 ];
 
-module.exports = flatten(languages).map((language, index) => {
+export default flatten(languages).map((language, index) => {
 	if (index === 6 || index === 18) {
 		return {
 			type: 'base',
