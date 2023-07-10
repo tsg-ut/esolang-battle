@@ -5,7 +5,7 @@ import {validate} from '../lib/validation';
 import Contest from '../models/Contest';
 import Language from '../models/Language';
 import Submission from '../models/Submission';
-import _ from '../models/User';
+import '../models/User';
 
 mongoose.Promise = global.Promise;
 

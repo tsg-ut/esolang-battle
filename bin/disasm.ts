@@ -3,7 +3,7 @@ import langs from '../data/langs.json';
 import docker from '../engines/docker';
 import Language from '../models/Language';
 import Submission from '../models/Submission';
-import _ from '../models/User';
+import '../models/User';
 
 mongoose.Promise = global.Promise;
 

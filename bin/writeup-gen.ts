@@ -4,8 +4,8 @@ import isValidUTF8 from 'utf-8-validate';
 import langs from '../data/langs.json';
 import Contest from '../models/Contest';
 import Language from '../models/Language';
-import _ from '../models/Submission';
-import __ from '../models/User';
+import '../models/Submission';
+import '../models/User';
 
 mongoose.Promise = global.Promise;
 

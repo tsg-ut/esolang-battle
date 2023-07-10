@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import lodash from 'lodash';
 import passport from 'passport';
 import {Strategy as TwitterStrategy} from 'passport-twitter';
 import {NextFunction, Request, Response} from 'express';
@@ -122,7 +122,7 @@ export function isAuthenticated(
 export function isAuthorized(req: Request, res: Response, next: NextFunction) {
 	const provider = req.path.split('/').slice(-1)[0];
 
-	if (_.find(req.user.tokens, {kind: provider})) {
+	if (lodash.find(req.user.tokens, {kind: provider})) {
 		next();
 		return;
 	}
