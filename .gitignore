@@ -32,3 +32,6 @@ bower_components
 # OS metadata
 .DS_Store
 Thumbs.db
+
+# Compiled Typescript files
+/dist

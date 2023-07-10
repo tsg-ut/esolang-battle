@@ -10,10 +10,13 @@
   "author": "Koki Takahashi <hakatasiloving@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "start": "node app.mjs",
+    "clean": "rm -rf ./dist",
+    "build": "npm run clean && mkdir ./dist && cp -R ./public ./dist && cp -R ./views ./dist && cp .env ./dist && npx tsc",
+    "migrate": "npm run build; node ./dist/bin/migrate.js",
+    "start": "npm run build; node --enable-source-maps ./dist/app.mjs",
     "test": "mocha --reporter spec --exit",
-    "dev": "nodemon app.mjs --ignore public",
-    "lint": "prettier-eslint '**/*.js' '**/*.mjs' '**/*.jsx' --ignore 'public/js/lib/**' --write && eslint '**/*.js' --ignore-pattern 'public/js/lib/**'"
+    "dev": "nodemon --exec npm run start --ignore dist --ignore public --ext js,mjs,ts,json,pug",
+    "lint": "prettier-eslint '**/*.ts' '**/*.mts' --write"
   },
   "engines": {
     "node": ">=16"
@@ -77,6 +80,26 @@
   },
   "devDependencies": {
     "@hakatashi/eslint-config": "^1.20.0",
+    "@slack/types": "^2.8.0",
+    "@types/chalk": "^2.2.0",
+    "@types/compression": "^1.7.2",
+    "@types/concat-stream": "^2.0.0",
+    "@types/dockerode": "^3.3.19",
+    "@types/errorhandler": "^1.5.0",
+    "@types/express-flash": "^0.0.2",
+    "@types/express-session": "^1.17.7",
+    "@types/lodash": "^4.14.195",
+    "@types/lusca": "^1.7.1",
+    "@types/morgan": "^1.9.4",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^20.3.1",
+    "@types/passport": "^1.0.12",
+    "@types/passport-twitter": "^1.0.37",
+    "@types/shell-escape": "^0.2.1",
+    "@types/tmp": "^0.2.3",
+    "@types/utf-8-validate": "^5.0.0",
+    "@types/webpack": "^5.28.1",
+    "@types/webpack-hot-middleware": "^2.25.6",
     "chai": "^4.3.7",
     "eslint": "^8.43.0",
     "mocha": "^10.2.0",
@@ -84,6 +107,8 @@
     "prettier-eslint-cli": "^7.1.0",
     "sinon": "^7",
     "sinon-mongoose": "^2.3.0",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.3"
   }
 }

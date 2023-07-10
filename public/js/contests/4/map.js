@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import {OrbitControls} from 'three/addons/controls/OrbitControls';
 import {TrackballControls} from 'three/addons/controls/TrackballControls';
 
-import snubDodecahedron from '../../../../data/snub-dodecahedron.js';
+import * as snubDodecahedron from '../../../../data/snub-dodecahedron.js';
 
 export default class {
 	constructor(element, onFacesUpdate, onClick) {
